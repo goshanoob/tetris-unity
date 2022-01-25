@@ -1,16 +1,16 @@
 using UnityEngine;
 
 /// <summary>
-///  Класс, управляющий игровым полем.
+/// В РљР»Р°СЃСЃ, СѓРїСЂР°РІР»СЏСЋС‰РёР№ РёРіСЂРѕРІС‹Рј РїРѕР»РµРј.
 /// </summary>
 public class SceneController : MonoBehaviour
 {
-    // Количество сторок игрового поля.
-    private int rowCount = 20;
-    // Количество столбцов игрового поля.
-    private int columnCount = 20;
+    // РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚РѕСЂРѕРє РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ.
+    private static int rowCount = 20;
+    // РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚РѕР»Р±С†РѕРІ РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ.
+    private static int columnCount = 10;
 
-    [Header("Префабы фигур")]
+    [Header("РџСЂРµС„Р°Р±С‹ С„РёРіСѓСЂ")]
     [SerializeField] private GameObject figure1;
     [SerializeField] private GameObject figure2;
     [SerializeField] private GameObject figure3;
@@ -22,15 +22,27 @@ public class SceneController : MonoBehaviour
     [SerializeField] private GameObject figure9;
     [SerializeField] private GameObject figure10;
 
+    [SerializeField] public static Vector3 spawnPosition = new Vector3(0, rowCount / 2, 0);
+    public int RowCount
+    {
+        get => rowCount;
+        set => rowCount = value;
+    }
+    public int ColumnCount
+    {
+        get => columnCount;
+        set => columnCount = value;
+    }
+
     private void Start()
     {
-        
     }
 
     private void Update()
     {
         
     }
+
 
 
 }
