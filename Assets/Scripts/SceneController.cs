@@ -77,7 +77,7 @@ public class SceneController : MonoBehaviour
         GameObject newFigure = Instantiate(figures[figureNumber]);
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
-        figureContoller.sceneController = this;
+        figureContoller.SceneController = this;
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += Figure_FigureDroped;
     }

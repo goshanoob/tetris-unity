@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 296829928077938719}
   - component: {fileID: 4656344805497064103}
   m_Layer: 31
-  m_Name: test
+  m_Name: Tetris Palette
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

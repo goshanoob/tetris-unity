@@ -42,7 +42,9 @@ namespace XD.Additions
             return result;
         }
 
-
+        /// <summary>
+        /// Проверить, что сумма вероятностей равна 1.
+        /// </summary>
         private void CheckProbabilities()
         {
             double sum = 0;

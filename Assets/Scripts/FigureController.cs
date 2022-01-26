@@ -15,6 +15,8 @@ public class FigureController : MonoBehaviour
     // Допустимое время неподвижности фигуры в секундах.
     [SerializeField] private float dropTime = 1;
 
+    // Контроллер сцены.
+    private SceneController sceneController;
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
     // Угол вращения фигуры.
@@ -26,8 +28,11 @@ public class FigureController : MonoBehaviour
 
     // Событие окончания падения фигуры.
     public event EventHandler FigureDroped;
-    // Контроллер сцены.
-    public SceneController sceneController;
+    // Свойство для привязки к контроллеру сцены.
+    public SceneController SceneController
+    {
+        set => sceneController = value;
+    }
 
     /// <summary>
     /// Возможные направления перемещения фигуры.
@@ -126,7 +131,7 @@ public class FigureController : MonoBehaviour
     {
         rotator.transform.Rotate(0, 0, angle);
         // Если выполненный поворот недопустим, отменить его.
-        // Величина поступатльного перемещения, необходимая методу проверки, отсутствует.
+        // Величина поступательного перемещения, необходимая методу проверки, отсутствует.
         if (!isCorrectMove(Vector3.zero))
         {
             rotator.transform.Rotate(0, 0, -angle);
