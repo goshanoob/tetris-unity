@@ -13,14 +13,15 @@ public class SceneController : MonoBehaviour
     // Количество столбцов игрового поля.
     private static int columnCount = 10;
     // Вероятности выпадения фигур.
-    private static double[] probabilities = new double[] { 0.2, 0.4, 0.4, 0.15, 0.15, 0.1, 0.2 };
+    private static double[] probabilities = new double[] { 0.1, 0.15, 0.15, 0.15, 0.15, 0.1, 0.2, 0.05 , 0.05 , 0.05 };
     // Режимы игры.
     private enum Modes
     {
-        firstMode = 3,
+        firstMode = 7,
         secondMode = 10,
     }
     private Modes currentMode = Modes.firstMode;
+    private Randomizer figureRandoms;
 
     [Header("Префабы фигур")]
     [SerializeField] private GameObject[] figures;
@@ -39,9 +40,27 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        CreateFigures();
         GenerateFigure();
     }
 
+    private void CreateFigures()
+    {
+        // Количество фигур согласно режиму игры.
+        double[] modeProbabilities = new double[(int)Modes.firstMode];
+        switch (currentMode)
+        {
+            case Modes.firstMode:
+                Array.Copy(probabilities, modeProbabilities, (int)Modes.firstMode);
+                break;
+
+            case Modes.secondMode:
+                Array.Copy(probabilities, modeProbabilities, (int)Modes.secondMode);
+                break;
+        }
+        // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
+        figureRandoms = new Randomizer(modeProbabilities);
+    }
     private void Figure_FigureDroped(object sender, EventArgs e)
     {
         GenerateFigure();
@@ -57,20 +76,6 @@ public class SceneController : MonoBehaviour
     /// </summary>
     private void GenerateFigure()
     {
-        // Количество фигур согласно режиму игры.
-        double[] modeProbabilities = new double[(int)Modes.firstMode];
-        switch (currentMode)
-        {
-            case Modes.firstMode:
-                Array.Copy(probabilities, modeProbabilities, (int)Modes.firstMode);
-                break;
-
-            case Modes.secondMode:
-                Array.Copy(probabilities, modeProbabilities, (int)Modes.secondMode);
-                break;
-        }
-        // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
-        Randomizer figureRandoms = new Randomizer(modeProbabilities);
         // Получить случайное значение.
         int figureNumber = figureRandoms.GetNextNumber();
         // Создать случайную фигуру.
