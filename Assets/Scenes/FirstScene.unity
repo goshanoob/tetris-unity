@@ -152,16 +152,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7777f00d9f1605c46b81581a1ab44723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  figure1: {fileID: 3962296679904283571, guid: 6e9e7242afc9bab47b31a7a4c1d7185a, type: 3}
-  figure2: {fileID: 5726774566514731945, guid: 1a5e077f3435fbf42bc1bdc5b7938254, type: 3}
-  figure3: {fileID: 0}
-  figure4: {fileID: 0}
-  figure5: {fileID: 0}
-  figure6: {fileID: 0}
-  figure7: {fileID: 0}
-  figure8: {fileID: 0}
-  figure9: {fileID: 0}
-  figure10: {fileID: 0}
+  figures:
+  - {fileID: 3962296679904283571, guid: 6e9e7242afc9bab47b31a7a4c1d7185a, type: 3}
+  - {fileID: 5726774566514731945, guid: 1a5e077f3435fbf42bc1bdc5b7938254, type: 3}
+  - {fileID: 6306691321818243321, guid: 01be8bf2891b3434f9a3a065a9f960de, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &169186616
 Transform:
   m_ObjectHideFlags: 0

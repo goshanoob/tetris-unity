@@ -6,16 +6,15 @@ using System;
 /// </summary>
 public class FigureController : MonoBehaviour
 {
-    // Сериализованный контроллер сцены для добавления в редакторе.
-    public SceneController sceneController;
+    // Игровой объект для вращения фигуры.
     [SerializeField] private GameObject rotator;
-
     // Скорость движения фигуры вниз.
     [SerializeField] private float dropSpeed = 2;
     // Ускоренное движение фигуры вниз.
     [SerializeField] private float speedMultiplier = 1;
     // Допустимое время неподвижности фигуры в секундах.
     [SerializeField] private float dropTime = 1;
+
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
     // Угол вращения фигуры.
@@ -25,7 +24,10 @@ public class FigureController : MonoBehaviour
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
 
+    // Событие окончания падения фигуры.
     public event EventHandler FigureDroped;
+    // Контроллер сцены.
+    public SceneController sceneController;
 
     /// <summary>
     /// Возможные направления перемещения фигуры.
@@ -36,6 +38,7 @@ public class FigureController : MonoBehaviour
         right = 1,
         down = 2,
     }
+
     private void Start()
     {
         startPostition = SceneController.spawnPosition;
@@ -154,6 +157,8 @@ public class FigureController : MonoBehaviour
             if (yPosition == -halfHeight) {
                 isDroped = true;
                 FigureDroped?.Invoke(this, EventArgs.Empty);
+                isDroped = true;
+                return false;
             }
             // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
             if (xPosition >= halfWidth ||

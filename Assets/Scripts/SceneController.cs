@@ -12,20 +12,18 @@ public class SceneController : MonoBehaviour
     private static int rowCount = 20;
     // Количество столбцов игрового поля.
     private static int columnCount = 10;
-    // Список возможных в игре фигур.
-    private List<GameObject> figures;
+    // Вероятности выпадения фигур.
+    private static double[] probabilities = new double[] { 0.2, 0.4, 0.4, 0.15, 0.15, 0.1, 0.2 };
+    // Режимы игры.
+    private enum Modes
+    {
+        firstMode = 3,
+        secondMode = 10,
+    }
+    private Modes currentMode = Modes.firstMode;
 
     [Header("Префабы фигур")]
-    [SerializeField] private GameObject figure1;
-    [SerializeField] private GameObject figure2;
-    [SerializeField] private GameObject figure3;
-    [SerializeField] private GameObject figure4;
-    [SerializeField] private GameObject figure5;
-    [SerializeField] private GameObject figure6;
-    [SerializeField] private GameObject figure7;
-    [SerializeField] private GameObject figure8;
-    [SerializeField] private GameObject figure9;
-    [SerializeField] private GameObject figure10;
+    [SerializeField] private GameObject[] figures;
 
     [SerializeField] public static Vector3 spawnPosition = new Vector3(0, rowCount / 2, 0);
     public int RowCount
@@ -41,19 +39,7 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
-        
-
-        figures = new List<GameObject>();
-        if(figure1 != null)
-        {
-            figures.Add(figure1);
-        }
-       
-        figures.Add(figure2);
-        figures.Add(figure3);
-
         GenerateFigure();
-
     }
 
     private void Figure_FigureDroped(object sender, EventArgs e)
@@ -66,16 +52,33 @@ public class SceneController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Метод создания случайной фигуры с необходимыми компонентами и обработчиками.
+    /// </summary>
     private void GenerateFigure()
-    {/*
-        Randomizer random = new Randomizer();
-        Debug.Log(random.GetNextNumber());
+    {
+        // Количество фигур согласно режиму игры.
+        double[] modeProbabilities = new double[(int)Modes.firstMode];
+        switch (currentMode)
+        {
+            case Modes.firstMode:
+                Array.Copy(probabilities, modeProbabilities, (int)Modes.firstMode);
+                break;
 
-        Randomizer figureRandoms = new Randomizer(new double[] { 0.1, 0.15, 0.15, 0.15, 0.15, 0.1, 0.2 });
-        int figureNumber = figureRandoms.GetNextNumber();*/
-        GameObject newFigure = Instantiate(figures[0]);
+            case Modes.secondMode:
+                Array.Copy(probabilities, modeProbabilities, (int)Modes.secondMode);
+                break;
+        }
+        // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
+        Randomizer figureRandoms = new Randomizer(modeProbabilities);
+        // Получить случайное значение.
+        int figureNumber = figureRandoms.GetNextNumber();
+        // Создать случайную фигуру.
+        GameObject newFigure = Instantiate(figures[figureNumber]);
+        // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         figureContoller.sceneController = this;
+        // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += Figure_FigureDroped;
     }
 }
