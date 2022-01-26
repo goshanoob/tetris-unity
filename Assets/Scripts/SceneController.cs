@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using XD.Additions;
+using XD.Tetris;
 
 /// <summary>
 ///  Класс, управляющий игровым полем.
@@ -12,20 +12,18 @@ public class SceneController : MonoBehaviour
     private static int rowCount = 20;
     // Количество столбцов игрового поля.
     private static int columnCount = 10;
-    // Вероятности выпадения фигур.
-    private static double[] probabilities = new double[] { 0.2, 0.4, 0.4, 0.15, 0.15, 0.1, 0.2 };
     // Режимы игры.
     private enum Modes
     {
-        firstMode = 3,
+        firstMode = 7,
         secondMode = 10,
     }
     private Modes currentMode = Modes.firstMode;
 
-    [Header("Префабы фигур")]
-    [SerializeField] private GameObject[] figures;
+    private GameObject[] figures;
+    private Randomizer figureRandoms;
 
-    [SerializeField] public static Vector3 spawnPosition = new Vector3(0, rowCount / 2, 0);
+    public static Vector3 spawnPosition = new Vector3(0, rowCount / 2, 0);
     public int RowCount
     {
         get => rowCount;
@@ -39,12 +37,28 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
-        GenerateFigure();
+        CreateFigures();
+
+        SpawnNewFigure();
+    }
+
+    private void CreateFigures()
+    {
+
+        int figuresCount = (int)currentMode;
+        double[] probabilities = new double[figuresCount];
+        for (int i = 0; i < figuresCount; i++)
+        {
+            probabilities[i] = figures[i].GetComponent<Figure>().Probability;
+        }
+
+        // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
+        figureRandoms = new Randomizer(probabilities);
     }
 
     private void Figure_FigureDroped(object sender, EventArgs e)
     {
-        GenerateFigure();
+        SpawnNewFigure();
     }
 
     private void Update()
@@ -55,22 +69,8 @@ public class SceneController : MonoBehaviour
     /// <summary>
     /// Метод создания случайной фигуры с необходимыми компонентами и обработчиками.
     /// </summary>
-    private void GenerateFigure()
+    private void SpawnNewFigure()
     {
-        // Количество фигур согласно режиму игры.
-        double[] modeProbabilities = new double[(int)Modes.firstMode];
-        switch (currentMode)
-        {
-            case Modes.firstMode:
-                Array.Copy(probabilities, modeProbabilities, (int)Modes.firstMode);
-                break;
-
-            case Modes.secondMode:
-                Array.Copy(probabilities, modeProbabilities, (int)Modes.secondMode);
-                break;
-        }
-        // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
-        Randomizer figureRandoms = new Randomizer(modeProbabilities);
         // Получить случайное значение.
         int figureNumber = figureRandoms.GetNextNumber();
         // Создать случайную фигуру.

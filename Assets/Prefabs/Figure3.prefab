@@ -208,6 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6306691321818243303}
   - component: {fileID: 6306691321818243302}
+  - component: {fileID: -2266048390045814514}
   m_Layer: 0
   m_Name: Figure3
   m_TagString: Untagged
@@ -242,11 +243,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf3f90617a52ff478106c834dfea12c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneController: {fileID: 0}
   rotator: {fileID: 6306691320792376644}
   dropSpeed: 1
   speedMultiplier: 2
   dropTime: 1
+--- !u!114 &-2266048390045814514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6306691321818243321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9158876ce5afceb47be2661b053d00aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6306691321852096676
 GameObject:
   m_ObjectHideFlags: 0
