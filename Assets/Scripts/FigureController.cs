@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 /// <summary>
 ///  Класс, описывающий поведение фигуры.
@@ -6,7 +7,7 @@ using UnityEngine;
 public class FigureController : MonoBehaviour
 {
     // Сериализованный контроллер сцены для добавления в редакторе.
-    [SerializeField] private SceneController sceneController;
+    public SceneController sceneController;
     [SerializeField] private GameObject rotator;
 
     // Скорость движения фигуры вниз.
@@ -23,6 +24,8 @@ public class FigureController : MonoBehaviour
     private Vector3 startPostition;
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
+
+    public event EventHandler FigureDroped;
 
     /// <summary>
     /// Возможные направления перемещения фигуры.
@@ -146,8 +149,11 @@ public class FigureController : MonoBehaviour
         {
             float xPosition = block.position.x;
             float yPosition = block.position.y;
+
+            // Если фигура достигла нижней границы, отметить ее упашей и вызвать событие падения.
             if (yPosition == -halfHeight) {
                 isDroped = true;
+                FigureDroped?.Invoke(this, EventArgs.Empty);
             }
             // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
             if (xPosition >= halfWidth ||
