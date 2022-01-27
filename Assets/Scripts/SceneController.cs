@@ -14,7 +14,7 @@ public class SceneController : MonoBehaviour
     // Режимы игры.
     private enum Modes
     {
-        firstMode = 7,
+        firstMode = 3,
         secondMode = 10,
     }
     private Modes currentMode = Modes.firstMode;
