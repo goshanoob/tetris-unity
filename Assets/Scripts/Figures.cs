@@ -1,11 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-namespace XD.Tetris
+namespace goshanoob.Tetris
 {
     internal abstract class Figure: MonoBehaviour
     {
-        private double probability = 0;
+        [SerializeField] private double probability = 0;
         public double Probability
         {
             get

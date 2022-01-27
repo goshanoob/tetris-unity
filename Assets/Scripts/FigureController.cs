@@ -1,5 +1,5 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 /// <summary>
 ///  Класс, описывающий поведение фигуры.
@@ -9,9 +9,9 @@ public class FigureController : MonoBehaviour
     // Игровой объект для вращения фигуры.
     [SerializeField] private GameObject rotator;
     // Скорость движения фигуры вниз.
-    [SerializeField] private float dropSpeed = 2;
+    [SerializeField] private float dropSpeed = 1;
     // Ускоренное движение фигуры вниз.
-    [SerializeField] private float speedMultiplier = 1;
+    [SerializeField] private float speedMultiplier = 2;
     // Допустимое время неподвижности фигуры в секундах.
     [SerializeField] private float dropTime = 1;
 
@@ -25,6 +25,9 @@ public class FigureController : MonoBehaviour
     private Vector3 startPostition;
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
+
+
+
 
     // Событие окончания падения фигуры.
     public event EventHandler FigureDroped;
@@ -48,21 +51,28 @@ public class FigureController : MonoBehaviour
     {
         startPostition = SceneController.spawnPosition;
         transform.position = startPostition;
+
+    }
+
+    private void FigureStep()
+    {
+        // Добавить время кадра к счетчику времени.
+        // Время контролируется для равномерного движения фигуры вниз.
+        timer += Time.deltaTime;
+        // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
+        if (timer >= dropTime)
+        {
+            MoveFigure(Directions.down);
+            timer = 0;
+        }
     }
 
     private void Update()
     {
         if (!isDroped)
         {
-            // Добавить время кадра к счетчику времени.
-            // Время контролируется для равномерного движения фигуры вниз.
-            timer += Time.deltaTime;
-            // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
-            if (timer >= dropTime)
-            {
-                MoveFigure(Directions.down);
-                timer = 0;
-            }
+            // Сделать фигурой шаг вниз на одну клетку, если требуется.
+            FigureStep();
 
             // Если нажата клавиша, выполнить перемещение фигуры.
             if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -147,9 +157,12 @@ public class FigureController : MonoBehaviour
     {
         // Результат проверки.
         bool result = true;
+
         // Расстояние от центра игрового поля до крайних положений по горизонтали и вертикали.
-        int halfWidth = sceneController.ColumnCount / 2;
-        int halfHeight = sceneController.RowCount / 2;
+        int width = sceneController.ColumnCount;
+
+        // Пометить клетку как незаполненную.
+        bool isFilledCell = false;
         // Выполнить перемещение, чтобы првоерить его допустимость.
         transform.position += movement;
         // Перебрать все блоки фигуры.
@@ -158,24 +171,60 @@ public class FigureController : MonoBehaviour
             float xPosition = block.position.x;
             float yPosition = block.position.y;
 
-            // Если фигура достигла нижней границы, отметить ее упашей и вызвать событие падения.
-            if (yPosition == -halfHeight) {
+            isFilledCell = sceneController.Ground.CheckCell((int)yPosition, (int)xPosition);
+
+            // Если достигли земли или другой упавшей фигуры, пометить текущую фигуру упавшей.
+            // Вызвать событие для генерации следующей фигуры.
+            if (yPosition <= 0 ||
+                isFilledCell)
+            {
                 isDroped = true;
                 FigureDroped?.Invoke(this, EventArgs.Empty);
-                isDroped = true;
-                return false;
-            }
-            // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
-            if (xPosition >= halfWidth ||
-                xPosition < -halfWidth)
-            {
                 result = false;
                 break;
+            }
+
+            // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
+            if (xPosition >= width ||
+                xPosition < 0)
+            {
+                result = true;
+                CreateBlock();
+                //break;
             }
         }
         // Отменить перемещение независимо от рельтата проверки.
         transform.position -= movement;
-
+        // Если фигура упала, отметить заполненные ячейки игрового поля.
+        if (isDroped)
+        {
+            FillBlocks();
+        }
         return result;
+    }
+
+    private void FillBlocks()
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            int rowNumber = (int)block.position.y;
+            int columnNumber = (int)block.position.x;
+            sceneController.Ground.FillCell(rowNumber, columnNumber);
+        }
+    }
+
+
+    private void CreateBlock()
+    {/*
+        Transform oldBlock = rotator.transform.GetChild(0);
+        Transform block = Instantiate<Transform>(oldBlock);
+        block.SetParent(rotator.transform);
+
+        
+        block.transform.localPosition += new Vector3(-sceneController.ColumnCount, 0, 0);
+        int a = 5;*/
+
+        sceneController.SpawnNewFigure(gameObject);
+
     }
 }

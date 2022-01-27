@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace XD.Additions
+namespace goshanoob.Tetris
 {
     /// <summary>
     /// Структура для работы со случайными величинами.

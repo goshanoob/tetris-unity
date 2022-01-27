@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
-using XD.Additions;
-using XD.Tetris;
+using goshanoob.Tetris;
 
 /// <summary>
 ///  Класс, управляющий игровым полем.
@@ -20,10 +19,17 @@ public class SceneController : MonoBehaviour
     }
     private Modes currentMode = Modes.firstMode;
 
-    private GameObject[] figures;
+    [SerializeField] private GameObject[] figures;
     private Randomizer figureRandoms;
 
-    public static Vector3 spawnPosition = new Vector3(0, rowCount / 2, 0);
+    public static Vector3 spawnPosition = new Vector3(columnCount / 2, rowCount + 1f, 0);
+
+    public CellingField Ground
+    {
+        get;
+        set;
+    }
+    
     public int RowCount
     {
         get => rowCount;
@@ -37,8 +43,11 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
-        CreateFigures();
+        Ground = new CellingField(RowCount + 2, ColumnCount);
 
+        // Создать фигуры.
+        CreateFigures();
+        // Сгенерировать фигуру на сцене.
         SpawnNewFigure();
     }
 
@@ -80,5 +89,17 @@ public class SceneController : MonoBehaviour
         figureContoller.SceneController = this;
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += Figure_FigureDroped;
+    }
+
+    public void SpawnNewFigure(GameObject originFigure)
+    {
+
+        GameObject newFigure = Instantiate(originFigure, originFigure.transform.position - new Vector3(10, 0, 0), new Quaternion());
+        // Сообщить экземпляру фигуры о текущем контроллере.
+        FigureController figureContoller = newFigure.GetComponent<FigureController>();
+        figureContoller.SceneController = this;
+        //newFigure.transform.position += new Vector3(-10, 0, 0);
+        int a = 5;
+
     }
 }
