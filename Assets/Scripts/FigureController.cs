@@ -8,12 +8,9 @@ public class FigureController : MonoBehaviour
 {
     // Игровой объект для вращения фигуры.
     [SerializeField] private GameObject rotator;
-    // Скорость движения фигуры вниз.
-    [SerializeField] private float dropSpeed = 1;
-    // Ускоренное движение фигуры вниз.
-    [SerializeField] private float speedMultiplier = 2;
     // Допустимое время неподвижности фигуры в секундах.
-    [SerializeField] private float dropTime = 1;
+    [SerializeField] private float dropTime1 = 0.5f;
+    [SerializeField] private float extraDropTime1 = 0.1f;
 
     // Контроллер сцены.
     private SceneController sceneController;
@@ -52,15 +49,19 @@ public class FigureController : MonoBehaviour
         startPostition = SceneController.spawnPosition;
         transform.position = startPostition;
 
+        // Регистрация обработчика события уничтожения линии на сцене.
+        sceneController.LineDestroy += DestoryBlocks;
+        sceneController.LinesShift += ShiftBlocks;
+
     }
 
-    private void FigureStep()
+    private void FigureStep(float maxTime)
     {
         // Добавить время кадра к счетчику времени.
         // Время контролируется для равномерного движения фигуры вниз.
         timer += Time.deltaTime;
         // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
-        if (timer >= dropTime)
+        if (timer >= maxTime)
         {
             MoveFigure(Directions.down);
             timer = 0;
@@ -72,7 +73,7 @@ public class FigureController : MonoBehaviour
         if (!isDroped)
         {
             // Сделать фигурой шаг вниз на одну клетку, если требуется.
-            FigureStep();
+            FigureStep(dropTime1);
 
             // Если нажата клавиша, выполнить перемещение фигуры.
             if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -85,9 +86,9 @@ public class FigureController : MonoBehaviour
             }
 
             // Если нажата кнопка вниз, ускорить движение.
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKey(KeyCode.DownArrow))
             {
-                MoveFigure(Directions.down, speedMultiplier);
+                FigureStep(extraDropTime1);
             }
 
             // Если нажата кливаша Пробел, повернуть фигуру.
@@ -102,7 +103,7 @@ public class FigureController : MonoBehaviour
     /// Метод перемещения фигуры.
     /// </summary>
     /// <param name="direction">Направление перемещения.</param>
-    private void MoveFigure(Directions direction, float speedMultiplier = 1)
+    private void MoveFigure(Directions direction)
     {
         Vector3 movement;
         switch (direction)
@@ -124,7 +125,7 @@ public class FigureController : MonoBehaviour
                 break;
 
             case Directions.down:
-                movement = speedMultiplier * dropSpeed * Vector3.down;
+                movement = Vector3.down;
                 if (isCorrectMove(movement))
                 {
                     transform.Translate(movement);
@@ -188,9 +189,8 @@ public class FigureController : MonoBehaviour
             if (xPosition >= width ||
                 xPosition < 0)
             {
-                result = true;
-                CreateBlock();
-                //break;
+                result = false;
+                break;
             }
         }
         // Отменить перемещение независимо от рельтата проверки.
@@ -213,18 +213,31 @@ public class FigureController : MonoBehaviour
         }
     }
 
+    private void DestoryBlocks(int lineNumber)
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            if(block.position.y == lineNumber)
+            {
+                Destroy(block.gameObject);
+            }
+        }
+    }
+
+    private void ShiftBlocks(int lineNumber)
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            if (block.position.y > lineNumber)
+            {
+                block.parent.transform.Translate(Vector3.down);
+                break;
+            }
+        }
+    }
 
     private void CreateBlock()
-    {/*
-        Transform oldBlock = rotator.transform.GetChild(0);
-        Transform block = Instantiate<Transform>(oldBlock);
-        block.SetParent(rotator.transform);
-
-        
-        block.transform.localPosition += new Vector3(-sceneController.ColumnCount, 0, 0);
-        int a = 5;*/
-
+    {
         sceneController.SpawnNewFigure(gameObject);
-
     }
 }

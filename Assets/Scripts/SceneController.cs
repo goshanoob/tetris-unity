@@ -1,6 +1,6 @@
+using goshanoob.Tetris;
 using System;
 using UnityEngine;
-using goshanoob.Tetris;
 
 /// <summary>
 ///  Класс, управляющий игровым полем.
@@ -14,22 +14,24 @@ public class SceneController : MonoBehaviour
     // Режимы игры.
     private enum Modes
     {
-        firstMode = 3,
+        firstMode = 7,
         secondMode = 10,
     }
-    private Modes currentMode = Modes.firstMode;
+    private Modes currentMode = Modes.secondMode;
 
     [SerializeField] private GameObject[] figures;
     private Randomizer figureRandoms;
 
     public static Vector3 spawnPosition = new Vector3(columnCount / 2, rowCount + 1f, 0);
-
+    // Событие, уничтожающее линию.
+    public event Action<int> LineDestroy;
+    public event Action<int> LinesShift;
     public CellingField Ground
     {
         get;
         set;
     }
-    
+
     public int RowCount
     {
         get => rowCount;
@@ -44,16 +46,16 @@ public class SceneController : MonoBehaviour
     private void Start()
     {
         Ground = new CellingField(RowCount + 2, ColumnCount);
-
         // Создать фигуры.
         CreateFigures();
         // Сгенерировать фигуру на сцене.
         SpawnNewFigure();
+
+        
     }
 
     private void CreateFigures()
     {
-
         int figuresCount = (int)currentMode;
         double[] probabilities = new double[figuresCount];
         for (int i = 0; i < figuresCount; i++)
@@ -61,18 +63,21 @@ public class SceneController : MonoBehaviour
             probabilities[i] = figures[i].GetComponent<Figure>().Probability;
         }
 
+        if (currentMode == Modes.secondMode)
+        {
+            figures[6].GetComponent<Figure>().Probability = 0.05;
+        }
+
         // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
         figureRandoms = new Randomizer(probabilities);
     }
 
-    private void Figure_FigureDroped(object sender, EventArgs e)
+    private void OnFigureDroped(object sender, EventArgs e)
     {
+        // Проверить, не появились ли заполненные линии.
+        CheckLines();
+        // Сгенерировать новую фигуру.
         SpawnNewFigure();
-    }
-
-    private void Update()
-    {
-
     }
 
     /// <summary>
@@ -88,18 +93,35 @@ public class SceneController : MonoBehaviour
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         figureContoller.SceneController = this;
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
-        figureContoller.FigureDroped += Figure_FigureDroped;
+        figureContoller.FigureDroped += OnFigureDroped;
     }
+
+    private void CheckLines()
+    {
+        for (int i = 0; i < RowCount; i++)
+        {
+            // Если линия полность заполнена, выполнить действия.
+            if (Ground.CheckLine(i))
+            {
+                // Вызвать событие для удаления строки.
+                LineDestroy(i);
+                // Сдвинуть верхние строки на место удаленной.
+                Ground.ShiftLines(i);
+                // Вызвать событие сдига блоков фигур.
+                LinesShift(i);
+            }
+
+        }
+    }
+
+
 
     public void SpawnNewFigure(GameObject originFigure)
     {
-
         GameObject newFigure = Instantiate(originFigure, originFigure.transform.position - new Vector3(10, 0, 0), new Quaternion());
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         figureContoller.SceneController = this;
         //newFigure.transform.position += new Vector3(-10, 0, 0);
-        int a = 5;
-
     }
 }

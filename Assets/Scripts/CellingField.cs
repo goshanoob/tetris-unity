@@ -1,73 +1,88 @@
-using System;
-
 namespace goshanoob.Tetris
 {
     /// <summary>
-    ///  ласс, описывающий €чейки игрового пол€.
+    ///  ласс, управл€ющий состо€нием €чеек игрового пол€.
     /// </summary>
     public class CellingField
     {
-        private bool[,] fillingCells;
-
-        public int RowCount
-        {
-            get;
-            set;
-        }
-
-        public int ColumnCount
-        {
-            get;
-            set;
-        }
+        // ѕоле дл€ хранени€ состо€ний €чеек игрового пол€.
+        // true - €чейка заполнена, false - свободна.
+        private bool[,] cells;
+        private int rowCount = 0;
+        private int columnCount = 0;
 
         public CellingField(int rowCount = 20, int columnCount = 10)
         {
-            RowCount = rowCount;
-            ColumnCount = columnCount;
-            fillingCells = new bool[rowCount, columnCount];
+            this.rowCount = rowCount;
+            this.columnCount = columnCount;
+            cells = new bool[rowCount, columnCount];
         }
 
+        /// <summary>
+        /// ћетод заполнени€ €чейки.
+        /// </summary>
+        /// <param name="rowNumber"></param>
+        /// <param name="columnNumber"></param>
         public void FillCell(int rowNumber, int columnNumber)
         {
-            if (columnNumber >= ColumnCount || columnNumber < 0)
+            if (columnNumber >= columnCount || columnNumber < 0)
             {
                 return;
             }
-            fillingCells[rowNumber, columnNumber] = true;
+            cells[rowNumber, columnNumber] = true;
         }
 
+        /// <summary>
+        /// ћетод проверки €чейки на заполненность.
+        /// </summary>
+        /// <param name="rowNumber"></param>
+        /// <param name="columnNumber"></param>
+        /// <returns></returns>
         public bool CheckCell(int rowNumber, int columnNumber)
         {
-            if (columnNumber >= ColumnCount || columnNumber < 0)
+            if (columnNumber >= columnCount || columnNumber < 0)
             {
                 return false;
             }
 
-            if (fillingCells[rowNumber, columnNumber])
+            if (cells[rowNumber, columnNumber])
             {
                 return true;
             }
             return false;
         }
 
-
-        public void FillCells()
+        /// <summary>
+        /// ћетод проверки заполненности линии игрового пол€.
+        /// </summary>
+        /// <param name="lineNumber"></param>
+        /// <returns></returns>
+        public bool CheckLine(int lineNumber)
         {
-
+            bool isFill = true;
+            for (int i = 0; i < columnCount; i++)
+            {
+                if (!cells[lineNumber, i])
+                {
+                    isFill = false;
+                }
+            }
+            return isFill;
         }
 
-        
-
-
-        public void ClearCell(int rowNumber, int columnNumber)
+        /// <summary>
+        /// ћетод сдвига верхних линий на место освобожденной линии.
+        /// </summary>
+        /// <param name="lineNumber"></param>
+        public void ShiftLines(int lineNumber)
         {
-
-        }
-
-        public int CheckLine()
-        {
-            throw new NotImplementedException();
+            for (int i = lineNumber; i < rowCount - 1; i++)
+            {
+                for (int j = 0; j < columnCount; j++)
+                {
+                    cells[i, j] = cells[i + 1, j];
+                }
+            }
         }
     }
 }

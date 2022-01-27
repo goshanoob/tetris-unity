@@ -270,7 +270,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6843493075152245836}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7042769046197425070}
@@ -409,9 +409,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotator: {fileID: 6843493075152245836}
-  dropSpeed: 1
-  speedMultiplier: 2
-  dropTime: 1
+  dropTime1: 0.5
+  extraDropTime1: 0.1
 --- !u!114 &8592876032396543744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -424,6 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f9490ad9f1c10249ad63f3661077dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  probability: 0.05
 --- !u!1 &7821173780844252500
 GameObject:
   m_ObjectHideFlags: 0

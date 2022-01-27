@@ -51,7 +51,7 @@ namespace goshanoob.Tetris
             {
                 sum += value;
             }
-            if (Math.Abs(sum - 1) > double.Epsilon)
+            if (Math.Abs(sum - 1) > 1e-6)
             {
                 throw new ArgumentException("Сумма вероятностей не равна 1");
             }
