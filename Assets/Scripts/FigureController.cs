@@ -13,7 +13,7 @@ internal class FigureController : MonoBehaviour
     [SerializeField] private float extraDropTime = 0.1f;
 
     // Контроллер сцены.
-    private SceneController sceneController;
+    private SceneController sceneController = null;
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
     // Угол вращения фигуры.
@@ -23,16 +23,9 @@ internal class FigureController : MonoBehaviour
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
 
-    
-
-
     // Событие окончания падения фигуры.
     public event EventHandler FigureDroped;
     // Свойство для привязки к контроллеру сцены.
-    public SceneController SceneController
-    {
-        set => sceneController = value;
-    }
 
     /// <summary>
     /// Возможные направления перемещения фигуры.
@@ -46,17 +39,17 @@ internal class FigureController : MonoBehaviour
 
     private void Awake()
     {
-        startPostition = SceneController.spawnPosition;
+        sceneController = SceneController.Instance;
     }
 
     private void Start()
     {
+        startPostition = sceneController.SpawnPosition;
         transform.position = startPostition;
-        // Регистрация обработчика события уничтожения линии на сцене.
 
+        // Регистрация обработчиков события уничтожения линии на сцене и сдвига верхних линий.
         sceneController.LineDestroy += OnLineDestroy;
         sceneController.LinesShift += OnLinesShift;
-
     }
 
     private void FigureStep(float maxTime)
@@ -182,7 +175,7 @@ internal class FigureController : MonoBehaviour
             float xPosition = block.position.x;
             float yPosition = block.position.y;
 
-            isFilledCell = sceneController.Ground.CheckCell((int)yPosition, (int)xPosition);
+            isFilledCell = sceneController.Cells[(int)yPosition, (int)xPosition];
 
             // Если достигли земли или другой упавшей фигуры, пометить текущую фигуру упавшей.
             // Вызвать событие для генерации следующей фигуры.
@@ -219,7 +212,7 @@ internal class FigureController : MonoBehaviour
         {
             int rowNumber = (int)block.position.y;
             int columnNumber = (int)block.position.x;
-            sceneController.Ground.FillCell(rowNumber, columnNumber);
+            sceneController.Cells[rowNumber, columnNumber] = true;
         }
     }
 
@@ -227,7 +220,7 @@ internal class FigureController : MonoBehaviour
     {
         foreach (Transform block in rotator.transform)
         {
-            if((int)block.position.y == lineNumber)
+            if ((int)block.position.y == lineNumber)
             {
                 Destroy(block.gameObject);
             }

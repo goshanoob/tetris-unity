@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GUIController : MonoBehaviour
+internal class GUIController : MonoBehaviour
 {
     [SerializeField] private Text scoreLabel;
     void Update()

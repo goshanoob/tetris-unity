@@ -19,33 +19,28 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Метод заполнения ячейки.
+        /// Индексатор для чтения и записи состояния ячейки.
         /// </summary>
-        /// <param name="rowNumber"></param>
-        /// <param name="columnNumber"></param>
-        public void FillCell(int rowNumber, int columnNumber)
-        {
-            if (columnNumber >= columnCount || columnNumber < 0)
-            {
-                return;
-            }
-            cells[rowNumber, columnNumber] = true;
-        }
-
-        /// <summary>
-        /// Метод проверки ячейки на заполненность.
-        /// </summary>
-        /// <param name="rowNumber"></param>
-        /// <param name="columnNumber"></param>
+        /// <param name="i">Строка</param>
+        /// <param name="j">Столбец</param>
         /// <returns></returns>
-        public bool CheckCell(int rowNumber, int columnNumber)
+        public bool this[int i, int j]
         {
-            if (columnNumber >= columnCount || columnNumber < 0)
+            get
             {
-                return false;
+                if (j >= columnCount || j < 0)
+                {
+                    return false;
+                }
+                return cells[i, j];
             }
-
-            return cells[rowNumber, columnNumber];
+            set
+            {
+                if (j < columnCount || j >= 0)
+                {
+                    cells[i, j] = value;
+                }
+            }
         }
 
         /// <summary>
