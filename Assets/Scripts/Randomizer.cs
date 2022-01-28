@@ -5,7 +5,7 @@ namespace goshanoob.Tetris
     /// <summary>
     /// Структура для работы со случайными величинами.
     /// </summary>
-    public struct Randomizer
+    internal struct Randomizer
     {
         private double[] chances;
 
@@ -51,9 +51,9 @@ namespace goshanoob.Tetris
             {
                 sum += value;
             }
-            if (Math.Abs(sum - 1) > 1e-6)
+            if (Math.Abs(sum -1) > 1e-10)
             {
-                throw new ArgumentException("Сумма вероятностей не равна 1");
+                throw new ArgumentException("The sum of the probabilities is not equal to one");
             }
         }
 

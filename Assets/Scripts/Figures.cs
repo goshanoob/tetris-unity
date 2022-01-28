@@ -20,7 +20,7 @@ namespace goshanoob.Tetris
                 }
                 else
                 {
-                    throw new ArgumentException("Probability can't be negative");
+                    throw new ArgumentException("A probability can't be negative");
                 }
             }
         }

@@ -1,12 +1,12 @@
 namespace goshanoob.Tetris
 {
     /// <summary>
-    /// Класс, управляющий состоянием ячеек игрового поля.
+    /// В РљР»Р°СЃСЃ, СѓРїСЂР°РІР»СЏВ¤СЋС‰РёР№ СЃРѕСЃС‚РѕВ¤РЅРёРµРј СЏС‡РµРµРє РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ.
     /// </summary>
     public class CellingField
     {
-        // Поле для хранения состояний ячеек игрового поля.
-        // true - ячейка заполнена, false - свободна.
+        // РџРѕР»Рµ РґР»СЏ С…СЂР°РЅРµРЅРёВ¤ СЃРѕСЃС‚РѕВ¤РЅРёР№ СЏС‡РµРµРє РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ.
+        // true - СЏС‡РµР№РєР° Р·Р°РїРѕР»РЅРµРЅР°, false - СЃРІРѕР±РѕРґРЅР°.
         private bool[,] cells;
         private int rowCount = 0;
         private int columnCount = 0;
@@ -19,7 +19,7 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Метод заполнения ячейки.
+        /// РњРµС‚РѕРґ Р·Р°РїРѕР»РЅРµРЅРёСЏ СЏС‡РµР№РєРё.
         /// </summary>
         /// <param name="rowNumber"></param>
         /// <param name="columnNumber"></param>
@@ -33,7 +33,7 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Метод проверки ячейки на заполненность.
+        /// РњРµС‚РѕРґ РїСЂРѕРІРµСЂРєРё СЏС‡РµР№РєРё РЅР° Р·Р°РїРѕР»РЅРµРЅРЅРѕСЃС‚СЊ.
         /// </summary>
         /// <param name="rowNumber"></param>
         /// <param name="columnNumber"></param>
@@ -45,15 +45,11 @@ namespace goshanoob.Tetris
                 return false;
             }
 
-            if (cells[rowNumber, columnNumber])
-            {
-                return true;
-            }
-            return false;
+            return cells[rowNumber, columnNumber];
         }
 
         /// <summary>
-        /// Метод проверки заполненности линии игрового поля.
+        /// РњРµС‚РѕРґ РїСЂРѕРІРµСЂРєРё Р·Р°РїРѕР»РЅРµРЅРЅРѕСЃС‚Рё Р»РёРЅРёРё РёРіСЂРѕРІРѕРіРѕ РїРѕР»СЏ.
         /// </summary>
         /// <param name="lineNumber"></param>
         /// <returns></returns>
@@ -71,7 +67,7 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Метод сдвига верхних линий на место освобожденной линии.
+        /// РњРµС‚РѕРґ СЃРґРІРёРіР° РІРµСЂС…РЅРёС… Р»РёРЅРёР№ РЅР° РјРµСЃС‚Рѕ РѕСЃРІРѕР±РѕР¶РґРµРЅРЅРѕР№ Р»РёРЅРёРё.
         /// </summary>
         /// <param name="lineNumber"></param>
         public void ShiftLines(int lineNumber)

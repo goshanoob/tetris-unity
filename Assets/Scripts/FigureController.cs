@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 ///  Класс, описывающий поведение фигуры.
 /// </summary>
-public class FigureController : MonoBehaviour
+internal class FigureController : MonoBehaviour
 {
     // Игровой объект для вращения фигуры.
     [SerializeField] private GameObject rotator;
@@ -23,7 +23,7 @@ public class FigureController : MonoBehaviour
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
 
-
+    
 
 
     // Событие окончания падения фигуры.
@@ -44,14 +44,17 @@ public class FigureController : MonoBehaviour
         down = 2,
     }
 
-    private void Start()
+    private void Awake()
     {
         startPostition = SceneController.spawnPosition;
-        transform.position = startPostition;
+    }
 
+    private void Start()
+    {
+        transform.position = startPostition;
         // Регистрация обработчика события уничтожения линии на сцене.
-        sceneController.LineDestroy += DestoryBlocks;
-        sceneController.LinesShift += ShiftBlocks;
+        sceneController.LineDestroy += OnLineDestroy;
+        sceneController.LinesShift += OnLinesShift;
 
     }
 
@@ -74,28 +77,33 @@ public class FigureController : MonoBehaviour
         {
             // Сделать фигурой шаг вниз на одну клетку, если требуется.
             FigureStep(dropTime1);
+            bool left = Input.GetKeyDown(KeyCode.LeftArrow);
+            bool right = Input.GetKeyDown(KeyCode.RightArrow);
+            bool down = Input.GetKey(KeyCode.DownArrow);
+            bool space = Input.GetKeyDown(KeyCode.Space);
 
             // Если нажата клавиша, выполнить перемещение фигуры.
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (left)
             {
                 MoveFigure(Directions.left);
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            else if (right)
             {
                 MoveFigure(Directions.right);
             }
 
             // Если нажата кнопка вниз, ускорить движение.
-            if (Input.GetKey(KeyCode.DownArrow))
+            if (down)
             {
                 FigureStep(extraDropTime1);
             }
 
             // Если нажата кливаша Пробел, повернуть фигуру.
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (space)
             {
                 Rotate(angle);
             }
+
         }
     }
 
@@ -109,7 +117,7 @@ public class FigureController : MonoBehaviour
         switch (direction)
         {
             case Directions.left:
-                movement = transform.TransformDirection(Vector3.left);
+                movement = Vector3.left;
                 if (isCorrectMove(movement))
                 {
                     transform.Translate(movement);
@@ -117,7 +125,7 @@ public class FigureController : MonoBehaviour
                 break;
 
             case Directions.right:
-                movement = transform.TransformDirection(Vector3.right);
+                movement = Vector3.right;
                 if (isCorrectMove(movement))
                 {
                     transform.Translate(movement);
@@ -180,7 +188,6 @@ public class FigureController : MonoBehaviour
                 isFilledCell)
             {
                 isDroped = true;
-                FigureDroped?.Invoke(this, EventArgs.Empty);
                 result = false;
                 break;
             }
@@ -193,12 +200,13 @@ public class FigureController : MonoBehaviour
                 break;
             }
         }
-        // Отменить перемещение независимо от рельтата проверки.
+        // Отменить перемещение независимо от результата проверки.
         transform.position -= movement;
         // Если фигура упала, отметить заполненные ячейки игрового поля.
         if (isDroped)
         {
             FillBlocks();
+            FigureDroped?.Invoke(this, EventArgs.Empty);
         }
         return result;
     }
@@ -213,25 +221,26 @@ public class FigureController : MonoBehaviour
         }
     }
 
-    private void DestoryBlocks(int lineNumber)
+    private void OnLineDestroy(int lineNumber)
     {
         foreach (Transform block in rotator.transform)
         {
-            if(block.position.y == lineNumber)
+            if((int)block.position.y == lineNumber)
             {
                 Destroy(block.gameObject);
             }
         }
     }
 
-    private void ShiftBlocks(int lineNumber)
+    private void OnLinesShift(int lineNumber)
     {
         foreach (Transform block in rotator.transform)
         {
-            if (block.position.y > lineNumber)
+            if ((int)block.position.y > lineNumber)
             {
-                block.parent.transform.Translate(Vector3.down);
-                break;
+                //block.gameObject.transform.Translate(Vector3.down); // плохо
+                // Обязательно изменить абсолютные координаты из-за возможных вращений фигуры.
+                block.transform.position -= Vector3.down;
             }
         }
     }

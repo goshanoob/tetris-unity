@@ -5,12 +5,12 @@ using UnityEngine;
 /// <summary>
 ///  Класс, управляющий игровым полем.
 /// </summary>
-public class SceneController : MonoBehaviour
+internal class SceneController : MonoBehaviour
 {
     // Количество сторок игрового поля.
-    private static int rowCount = 20;
+    private int rowCount = 20;
     // Количество столбцов игрового поля.
-    private static int columnCount = 10;
+    private int columnCount = 10;
     // Режимы игры.
     private enum Modes
     {
@@ -22,7 +22,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private GameObject[] figures;
     private Randomizer figureRandoms;
 
-    public static Vector3 spawnPosition = new Vector3(columnCount / 2, rowCount + 1f, 0);
+    public static Vector3 spawnPosition ;
     // Событие, уничтожающее линию.
     public event Action<int> LineDestroy;
     public event Action<int> LinesShift;
@@ -43,15 +43,18 @@ public class SceneController : MonoBehaviour
         set => columnCount = value;
     }
 
-    private void Start()
+    private void Awake()
     {
         Ground = new CellingField(RowCount + 2, ColumnCount);
+    }
+
+    private void Start()
+    {
+        spawnPosition = new Vector3(columnCount / 2, rowCount + 1f, 0);
         // Создать фигуры.
         CreateFigures();
         // Сгенерировать фигуру на сцене.
         SpawnNewFigure();
-
-        
     }
 
     private void CreateFigures()
@@ -100,15 +103,16 @@ public class SceneController : MonoBehaviour
     {
         for (int i = 0; i < RowCount; i++)
         {
+            Debug.Log("Ground.CheckLine(i) = " + Ground.CheckLine(i) + ";  i = " + i);
             // Если линия полность заполнена, выполнить действия.
             if (Ground.CheckLine(i))
             {
                 // Вызвать событие для удаления строки.
-                LineDestroy(i);
+                LineDestroy?.Invoke(i);
                 // Сдвинуть верхние строки на место удаленной.
                 Ground.ShiftLines(i);
                 // Вызвать событие сдига блоков фигур.
-                LinesShift(i);
+                LinesShift?.Invoke(i);
             }
 
         }
