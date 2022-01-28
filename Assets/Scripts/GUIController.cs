@@ -1,18 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GUIController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    [SerializeField] private Text scoreLabel;
     void Update()
     {
-        
+        scoreLabel.text = Time.realtimeSinceStartup.ToString();
+    }
+    public void OnRestart()
+    {
+        Debug.Log("Restart Clicked");
+    }
+
+    public void OnFirstModeChanged()
+    {
+        Debug.Log("First Mode Changed");
+    }
+
+    public void OnSecondModeChanged()
+    {
+        Debug.Log("Second Mode Changed");
     }
 }
