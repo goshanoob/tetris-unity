@@ -9,8 +9,8 @@ internal class FigureController : MonoBehaviour
     // Игровой объект для вращения фигуры.
     [SerializeField] private GameObject rotator;
     // Допустимое время неподвижности фигуры в секундах.
-    [SerializeField] private float dropTime1 = 0.5f;
-    [SerializeField] private float extraDropTime1 = 0.1f;
+    [SerializeField] private float dropTime = 0.7f;
+    [SerializeField] private float extraDropTime = 0.1f;
 
     // Контроллер сцены.
     private SceneController sceneController;
@@ -53,6 +53,7 @@ internal class FigureController : MonoBehaviour
     {
         transform.position = startPostition;
         // Регистрация обработчика события уничтожения линии на сцене.
+
         sceneController.LineDestroy += OnLineDestroy;
         sceneController.LinesShift += OnLinesShift;
 
@@ -76,7 +77,8 @@ internal class FigureController : MonoBehaviour
         if (!isDroped)
         {
             // Сделать фигурой шаг вниз на одну клетку, если требуется.
-            FigureStep(dropTime1);
+            FigureStep(dropTime);
+            // Проверить нажатие кнопок.
             bool left = Input.GetKeyDown(KeyCode.LeftArrow);
             bool right = Input.GetKeyDown(KeyCode.RightArrow);
             bool down = Input.GetKey(KeyCode.DownArrow);
@@ -92,13 +94,13 @@ internal class FigureController : MonoBehaviour
                 MoveFigure(Directions.right);
             }
 
-            // Если нажата кнопка вниз, ускорить движение.
+            // Если удерживается кнопка вниз, ускорить движение.
             if (down)
             {
-                FigureStep(extraDropTime1);
+                FigureStep(extraDropTime);
             }
 
-            // Если нажата кливаша Пробел, повернуть фигуру.
+            // Если нажата клавиша Пробел, повернуть фигуру.
             if (space)
             {
                 Rotate(angle);
@@ -110,7 +112,7 @@ internal class FigureController : MonoBehaviour
     /// <summary>
     /// Метод перемещения фигуры.
     /// </summary>
-    /// <param name="direction">Направление перемещения.</param>
+    /// <param name="direction">Направление перемещения</param>
     private void MoveFigure(Directions direction)
     {
         Vector3 movement;
@@ -238,15 +240,14 @@ internal class FigureController : MonoBehaviour
         {
             if ((int)block.position.y > lineNumber)
             {
-                //block.gameObject.transform.Translate(Vector3.down); // плохо
-                // Обязательно изменить абсолютные координаты из-за возможных вращений фигуры.
-                block.transform.position -= Vector3.down;
+                // Изаменить абсолютные координаты фигуры.
+                block.transform.position += Vector3.down;
             }
         }
     }
 
     private void CreateBlock()
     {
-        sceneController.SpawnNewFigure(gameObject);
+        sceneController.SpawnNewFigure2(gameObject);
     }
 }

@@ -26,6 +26,7 @@ internal class SceneController : MonoBehaviour
     // Событие, уничтожающее линию.
     public event Action<int> LineDestroy;
     public event Action<int> LinesShift;
+
     public CellingField Ground
     {
         get;
@@ -103,15 +104,15 @@ internal class SceneController : MonoBehaviour
     {
         for (int i = 0; i < RowCount; i++)
         {
-            Debug.Log("Ground.CheckLine(i) = " + Ground.CheckLine(i) + ";  i = " + i);
-            // Если линия полность заполнена, выполнить действия.
+            // Если линия полностью заполнена, выполнить действия.
             if (Ground.CheckLine(i))
             {
-                // Вызвать событие для удаления строки.
+                // Вызвать событие для удаления строки у всех фигур.
                 LineDestroy?.Invoke(i);
                 // Сдвинуть верхние строки на место удаленной.
                 Ground.ShiftLines(i);
-                // Вызвать событие сдига блоков фигур.
+                i--;
+                // Вызвать событие сдига блоков у каждой фигуры.
                 LinesShift?.Invoke(i);
             }
 
@@ -120,7 +121,7 @@ internal class SceneController : MonoBehaviour
 
 
 
-    public void SpawnNewFigure(GameObject originFigure)
+    public void SpawnNewFigure2(GameObject originFigure)
     {
         GameObject newFigure = Instantiate(originFigure, originFigure.transform.position - new Vector3(10, 0, 0), new Quaternion());
         // Сообщить экземпляру фигуры о текущем контроллере.
