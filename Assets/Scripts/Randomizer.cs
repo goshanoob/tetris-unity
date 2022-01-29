@@ -51,7 +51,7 @@ namespace goshanoob.Tetris
             {
                 sum += value;
             }
-            if (Math.Abs(sum -1) > 1e-10)
+            if (Math.Abs(sum -1) > 1e-6)
             {
                 throw new ArgumentException("The sum of the probabilities is not equal to one");
             }

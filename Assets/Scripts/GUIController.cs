@@ -1,25 +1,38 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 internal class GUIController : MonoBehaviour
 {
-    [SerializeField] private Text scoreLabel;
-    void Update()
+    [SerializeField] private Text scoreLabel = null;
+    [SerializeField] private PlayerController player = null;
+
+    public event Action RestartClicked;
+    public event Action FirstModeChecked;
+    public event Action SecondModeChecked;
+
+    private void Awake()
     {
-        scoreLabel.text = Time.realtimeSinceStartup.ToString();
+        player.ScoreChanged += OnScoreChanged;
     }
+
+    private void OnScoreChanged(int score)
+    {
+        scoreLabel.text = score.ToString();
+    }
+
     public void OnRestart()
     {
-        Debug.Log("Restart Clicked");
+        RestartClicked?.Invoke();
     }
 
     public void OnFirstModeChanged()
     {
-        Debug.Log("First Mode Changed");
+        FirstModeChecked?.Invoke();
     }
 
     public void OnSecondModeChanged()
     {
-        Debug.Log("Second Mode Changed");
+        SecondModeChecked?.Invoke();
     }
 }

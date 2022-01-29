@@ -1,3 +1,5 @@
+using System;
+
 namespace goshanoob.Tetris
 {
     /// <summary>
@@ -32,6 +34,15 @@ namespace goshanoob.Tetris
                 {
                     return false;
                 }
+                try
+                {
+                    bool a = cells[i, j];
+                } 
+                catch (Exception e)
+                {
+                    int a = 5;
+                }
+
                 return cells[i, j];
             }
             set

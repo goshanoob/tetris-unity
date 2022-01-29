@@ -1,57 +1,66 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 /// <summary>
 ///  Класс, описывающий игрока в тетрис.
 /// </summary>
 internal class PlayerController : MonoBehaviour
 {
-    [SerializeField] private FigureController figure;
+    private FigureController figure;
+    public event Action<int> ScoreChanged;
+    public event Action RotateClick;
+    public event Action DownClick;
+    private int score = 0;
 
+    public event Action<Vector3> ButtonClick;
     public int Score
     {
-        get;
-        set;
-    } = 0;
-
-    private enum Directions
-    {
-        left = 0,
-        right = 1,
-        down = 2,
+        get => score;
+        set
+        {
+            score = value;
+            ScoreChanged?.Invoke(score);
+        }
     }
 
-    public event Action ButtonClick;
+    public static PlayerController Instance
+    {
+        get;
+        private set;
+    }
 
-
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Update()
     {
         bool left = Input.GetKeyDown(KeyCode.LeftArrow);
         bool right = Input.GetKeyDown(KeyCode.RightArrow);
         bool down = Input.GetKey(KeyCode.DownArrow);
         bool space = Input.GetKeyDown(KeyCode.Space);
-        /*
+        
         // Если нажата клавиша, выполнить перемещение фигуры.
         if (left)
         {
-            MoveFigure(Directions.left);
+            ButtonClick?.Invoke(Vector3.left);
         }
         else if (right)
         {
-            MoveFigure(Directions.right);
+            ButtonClick?.Invoke(Vector3.right);
         }
 
         // Если нажата кнопка вниз, ускорить движение.
         if (down)
         {
-            FigureStep(extraDropTime1);
+            DownClick?.Invoke();
         }
 
         // Если нажата кливаша Пробел, повернуть фигуру.
         if (space)
         {
-            Rotate(angle);
+            RotateClick?.Invoke();
         }
-        */
+        
     }
 }

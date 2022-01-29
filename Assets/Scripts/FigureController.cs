@@ -14,18 +14,19 @@ internal class FigureController : MonoBehaviour
 
     // Контроллер сцены.
     private SceneController sceneController = null;
+    // Контроллер игрока.
+    private PlayerController playerController = null;
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
     // Угол вращения фигуры.
     private float angle = 90;
-    // Исходное положение фигуры.
-    private Vector3 startPostition;
     // Фиксирование фигуры после падения.
     private bool isDroped = false;
-
+    private bool firstTime = true;
+    public bool isClone = false;
     // Событие окончания падения фигуры.
-    public event EventHandler FigureDroped;
-    // Свойство для привязки к контроллеру сцены.
+    public event Action FigureDroped;
+
 
     /// <summary>
     /// Возможные направления перемещения фигуры.
@@ -40,16 +41,16 @@ internal class FigureController : MonoBehaviour
     private void Awake()
     {
         sceneController = SceneController.Instance;
+        playerController = PlayerController.Instance;
     }
 
     private void Start()
     {
-        startPostition = sceneController.SpawnPosition;
-        transform.position = startPostition;
-
-        // Регистрация обработчиков события уничтожения линии на сцене и сдвига верхних линий.
         sceneController.LineDestroy += OnLineDestroy;
         sceneController.LinesShift += OnLinesShift;
+        playerController.ButtonClick += MoveFigure;
+        playerController.RotateClick += () => Rotate(angle);
+        playerController.DownClick += () => FigureStep(extraDropTime); ;
     }
 
     private void FigureStep(float maxTime)
@@ -60,80 +61,29 @@ internal class FigureController : MonoBehaviour
         // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
         if (timer >= maxTime)
         {
-            MoveFigure(Directions.down);
+            MoveFigure(Vector3.down);
             timer = 0;
         }
     }
 
     private void Update()
     {
+        // Если фигура еще не упала, сдвинуть ее вниз на одну клетку.
         if (!isDroped)
         {
-            // Сделать фигурой шаг вниз на одну клетку, если требуется.
             FigureStep(dropTime);
-            // Проверить нажатие кнопок.
-            bool left = Input.GetKeyDown(KeyCode.LeftArrow);
-            bool right = Input.GetKeyDown(KeyCode.RightArrow);
-            bool down = Input.GetKey(KeyCode.DownArrow);
-            bool space = Input.GetKeyDown(KeyCode.Space);
-
-            // Если нажата клавиша, выполнить перемещение фигуры.
-            if (left)
-            {
-                MoveFigure(Directions.left);
-            }
-            else if (right)
-            {
-                MoveFigure(Directions.right);
-            }
-
-            // Если удерживается кнопка вниз, ускорить движение.
-            if (down)
-            {
-                FigureStep(extraDropTime);
-            }
-
-            // Если нажата клавиша Пробел, повернуть фигуру.
-            if (space)
-            {
-                Rotate(angle);
-            }
-
         }
     }
 
     /// <summary>
     /// Метод перемещения фигуры.
     /// </summary>
-    /// <param name="direction">Направление перемещения</param>
-    private void MoveFigure(Directions direction)
+    /// <param name="movement">Относительная величина перемещения</param>
+    private void MoveFigure(Vector3 movement)
     {
-        Vector3 movement;
-        switch (direction)
+        if (isCorrectMove(movement))
         {
-            case Directions.left:
-                movement = Vector3.left;
-                if (isCorrectMove(movement))
-                {
-                    transform.Translate(movement);
-                }
-                break;
-
-            case Directions.right:
-                movement = Vector3.right;
-                if (isCorrectMove(movement))
-                {
-                    transform.Translate(movement);
-                }
-                break;
-
-            case Directions.down:
-                movement = Vector3.down;
-                if (isCorrectMove(movement))
-                {
-                    transform.Translate(movement);
-                }
-                break;
+            transform.Translate(movement);
         }
     }
 
@@ -187,13 +137,22 @@ internal class FigureController : MonoBehaviour
                 break;
             }
 
+
+
             // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
             if (xPosition >= width ||
                 xPosition < 0)
             {
-                result = false;
+                if (firstTime && !isClone)
+                {
+                    CloneBlock();
+                    firstTime = false;
+                }
+                result = true;
                 break;
             }
+
+
         }
         // Отменить перемещение независимо от результата проверки.
         transform.position -= movement;
@@ -201,8 +160,9 @@ internal class FigureController : MonoBehaviour
         if (isDroped)
         {
             FillBlocks();
-            FigureDroped?.Invoke(this, EventArgs.Empty);
+            FigureDroped?.Invoke();
         }
+        OutLiteBlock();
         return result;
     }
 
@@ -239,8 +199,24 @@ internal class FigureController : MonoBehaviour
         }
     }
 
-    private void CreateBlock()
+    private void CloneBlock()
     {
         sceneController.SpawnNewFigure2(gameObject);
+    }
+
+    private void OutLiteBlock()
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            int width = sceneController.ColumnCount;
+            if (block.position.x >= width || block.position.x < 0)
+            {
+                block.gameObject.SetActive(false);
+            }
+            else
+            {
+                block.gameObject.SetActive(true);
+            }
+        }
     }
 }
