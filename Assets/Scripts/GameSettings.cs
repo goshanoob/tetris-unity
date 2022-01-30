@@ -10,6 +10,12 @@ internal class GameSettings : MonoBehaviour
 
     [SerializeField] private GUIController gui = null;
 
+    public static GameSettings Instance
+    {
+        get;
+        private set;
+    }
+
     public Modes Mode
     {
         get => currentMode;
@@ -23,6 +29,7 @@ internal class GameSettings : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
 
         currentMode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "firstMode"));
         gui.FirstModeChecked += () =>

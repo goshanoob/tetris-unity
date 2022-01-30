@@ -653,7 +653,6 @@ GameObject:
   - component: {fileID: 1540110076}
   - component: {fileID: 1540110078}
   - component: {fileID: 1540110079}
-  - component: {fileID: 1540110081}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -674,6 +673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 1540110080}
+  ground: {fileID: 1837990781}
   palyer: {fileID: 1540110078}
   gui: {fileID: 1540110079}
   figures:
@@ -740,22 +740,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gui: {fileID: 1540110079}
---- !u!114 &1540110081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1540110075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cf3f90617a52ff478106c834dfea12c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotator: {fileID: 0}
-  dropTime: 0.7
-  extraDropTime: 0.1
-  isClone: 0
 --- !u!1 &1686097516
 GameObject:
   m_ObjectHideFlags: 0

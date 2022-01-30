@@ -12,15 +12,16 @@ public class SceneController : MonoBehaviour
     private int rowCount = 20;
     // Количество столбцов игрового поля.
     private int columnCount = 10;
+    private int ectraColumnCount = 12;
     // Генаратор случайных фигур в соответствии с вероятностями выпадения.
     private Randomizer figureRandoms;
 
     [SerializeField] private GameSettings settings = null;
+    [SerializeField] private GameObject ground = null;
     [SerializeField] private PlayerController palyer = null;
     [SerializeField] private GUIController gui = null;
     [Header("Префабы фигур")]
     [SerializeField] private GameObject[] figures = null;
-    //private GameSettings.Modes currentMode = GameSettings.Modes.firstMode;
 
     // Событие, вызывающее уничтожение заполненных линий.
     public event Action<int> LineDestroy;
@@ -70,10 +71,21 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        // Расширить игровое поле.
+        if(settings.Mode == GameSettings.Modes.secondMode)
+        {
+            SetWidth(ectraColumnCount);
+            ColumnCount = ectraColumnCount;
+        }
         // Создать фигуры.
         CreateFigures();
         // Сгенерировать фигуру на сцене.
         SpawnNewFigure();
+    }
+
+    private void SetWidth(int width)
+    {
+        ground.transform.localScale = new Vector3(width, rowCount, 1);
     }
 
     private void CreateFigures()

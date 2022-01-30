@@ -34,23 +34,19 @@ namespace goshanoob.Tetris
                 {
                     return false;
                 }
-                try
-                {
-                    bool a = cells[i, j];
-                } 
-                catch (Exception e)
-                {
-                    int a = 5;
-                }
-
                 return cells[i, j];
             }
             set
             {
-                if (j < columnCount || j >= 0)
-                {
-                    cells[i, j] = value;
-                }
+                SetCell(i, j);
+            }
+        }
+
+        public void SetCell(int i, int j)
+        {
+            if (j < columnCount && j >= 0)
+            {
+                cells[i, j] = true;
             }
         }
 

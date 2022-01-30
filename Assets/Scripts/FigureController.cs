@@ -14,6 +14,8 @@ internal class FigureController : MonoBehaviour
 
     // Контроллер сцены.
     private SceneController sceneController = null;
+
+    private GameSettings settings = null;
     // Контроллер игрока.
     private PlayerController playerController = null;
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
@@ -41,6 +43,7 @@ internal class FigureController : MonoBehaviour
     private void Awake()
     {
         sceneController = SceneController.Instance;
+        settings = GameSettings.Instance;
         playerController = PlayerController.Instance;
     }
 
@@ -59,7 +62,7 @@ internal class FigureController : MonoBehaviour
         // Время контролируется для равномерного движения фигуры вниз.
         timer += Time.deltaTime;
         // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
-        if (timer >= maxTime)
+        if (timer >= maxTime && !isDroped)
         {
             MoveFigure(Vector3.down);
             timer = 0;
@@ -73,6 +76,9 @@ internal class FigureController : MonoBehaviour
         {
             FigureStep(dropTime);
         }
+
+        CheckTeleportation();
+        OutLiteBlock();
     }
 
     /// <summary>
@@ -81,11 +87,15 @@ internal class FigureController : MonoBehaviour
     /// <param name="movement">Относительная величина перемещения</param>
     private void MoveFigure(Vector3 movement)
     {
-        if (isCorrectMove(movement))
+        if (!isDroped)
         {
-            transform.Translate(movement);
+            if (isCorrectMove(movement))
+            {
+                transform.Translate(movement);
+            }
         }
     }
+
 
     /// <summary>
     /// Метод вращения фигуры на заданный угол.
@@ -93,12 +103,15 @@ internal class FigureController : MonoBehaviour
     /// <param name="angle">Угол поворота</param>
     private void Rotate(float angle)
     {
-        rotator.transform.Rotate(0, 0, angle);
-        // Если выполненный поворот недопустим, отменить его.
-        // Величина поступательного перемещения, необходимая методу проверки, отсутствует.
-        if (!isCorrectMove(Vector3.zero))
+        if (!isDroped)
         {
-            rotator.transform.Rotate(0, 0, -angle);
+            rotator.transform.Rotate(0, 0, angle);
+            // Если выполненный поворот недопустим, отменить его.
+            // Величина поступательного перемещения, необходимая методу проверки, отсутствует.
+            if (!isCorrectMove(Vector3.zero))
+            {
+                rotator.transform.Rotate(0, 0, -angle);
+            }
         }
     }
 
@@ -137,18 +150,11 @@ internal class FigureController : MonoBehaviour
                 break;
             }
 
-
-
             // Если хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
-            if (xPosition >= width ||
-                xPosition < 0)
+            if (settings.Mode == GameSettings.Modes.firstMode &&
+               (xPosition >= width || xPosition < 0))
             {
-                if (firstTime && !isClone)
-                {
-                    CloneBlock();
-                    firstTime = false;
-                }
-                result = true;
+                result = false;
                 break;
             }
 
@@ -161,8 +167,9 @@ internal class FigureController : MonoBehaviour
         {
             FillBlocks();
             FigureDroped?.Invoke();
+            DestroyFigure();
         }
-        OutLiteBlock();
+
         return result;
     }
 
@@ -172,7 +179,7 @@ internal class FigureController : MonoBehaviour
         {
             int rowNumber = (int)block.position.y;
             int columnNumber = (int)block.position.x;
-            sceneController.Cells[rowNumber, columnNumber] = true;
+            sceneController.Cells.SetCell(rowNumber, columnNumber);
         }
     }
 
@@ -199,6 +206,27 @@ internal class FigureController : MonoBehaviour
         }
     }
 
+
+    private void CheckTeleportation()
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            float xPosition = block.position.x;
+            float yPosition = block.position.y;
+            int width = sceneController.ColumnCount;
+
+            if (xPosition > width ||
+                    xPosition <= 0)
+            {
+                if (firstTime && !isClone)
+                {
+                    CloneBlock();
+                    firstTime = false;
+                }
+            }
+        }
+    }
+
     private void CloneBlock()
     {
         sceneController.SpawnNewFigure2(gameObject);
@@ -209,7 +237,7 @@ internal class FigureController : MonoBehaviour
         foreach (Transform block in rotator.transform)
         {
             int width = sceneController.ColumnCount;
-            if (block.position.x >= width || block.position.x < 0)
+            if (block.position.x > width || block.position.x <= 0)
             {
                 block.gameObject.SetActive(false);
             }
@@ -218,5 +246,17 @@ internal class FigureController : MonoBehaviour
                 block.gameObject.SetActive(true);
             }
         }
+    }
+
+    private void DestroyFigure()
+    {
+        foreach (Transform block in rotator.transform)
+        {
+            if (block.gameObject.activeSelf)
+            {
+                return;
+            }
+        }
+        Destroy(gameObject);
     }
 }
