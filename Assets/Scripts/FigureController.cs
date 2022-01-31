@@ -21,29 +21,19 @@ internal class FigureController : MonoBehaviour
 
     // Угол вращения фигуры.
     private float angle = 90;
-    // Фиксирование фигуры после падения.
-    private bool isDroped = false;
-    private bool firstTime = true;
-
+    
 
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
-    protected float timer = 0;
+    private float timer = 0;
 
-    public bool isClone = false;
     // Событие окончания падения фигуры.
     public event Action FigureDroped;
 
-
-
-
-    /// <summary>
-    /// Возможные направления перемещения фигуры.
-    /// </summary>
-    private enum Directions
+    // Фиксирование фигуры после падения
+    public bool IsDroped
     {
-        left = 0,
-        right = 1,
-        down = 2,
+        get;
+        set;
     }
 
     private void Awake()
@@ -68,7 +58,7 @@ internal class FigureController : MonoBehaviour
         // Время контролируется для равномерного движения фигуры вниз.
         timer += Time.deltaTime;
         // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
-        if (!isDroped && timer >= maxTime)
+        if (!IsDroped && timer >= maxTime)
         {
             MoveFigure(Vector3.down);
             timer = 0;
@@ -78,12 +68,12 @@ internal class FigureController : MonoBehaviour
     private void Update()
     {
         // Если фигура еще не упала, сдвинуть ее вниз на одну клетку.
-        if (!isDroped)
+        if (!IsDroped)
         {
             FigureStep(dropTime);
         }
-        // Активировать блоки только внутри игрвого поля.
-        ActivateBlocks();
+        // Скрыть блоки вне игрвого поля.
+        // HideBlocks();
     }
 
     /// <summary>
@@ -92,7 +82,7 @@ internal class FigureController : MonoBehaviour
     /// <param name="movement">Относительная величина перемещения</param>
     private void MoveFigure(Vector3 movement)
     {
-        if (!isDroped)
+        if (!IsDroped)
         {
             if (isCorrectMove(movement))
             {
@@ -107,7 +97,7 @@ internal class FigureController : MonoBehaviour
     /// <param name="angle">Угол поворота</param>
     private void Rotate(float angle)
     {
-        if (!isDroped)
+        if (!IsDroped)
         {
             rotator.transform.Rotate(0, 0, angle);
             // Если выполненный поворот недопустим, отменить его.
@@ -148,7 +138,7 @@ internal class FigureController : MonoBehaviour
             if (yPosition <= 0 ||
                 isFilledCell)
             {
-                isDroped = true;
+                IsDroped = true;
                 result = false;
                 break;
             }
@@ -158,15 +148,6 @@ internal class FigureController : MonoBehaviour
                (xPosition >= width || xPosition < 0))
             {
                 result = false;
-                break;
-            }
-            else if (settings.Mode == GameSettings.Modes.secondMode &&
-                    firstTime && !isClone &&
-                    (xPosition >= width || xPosition < 0))
-            {
-                CloneFigure(xPosition);
-                timer = 0;
-                firstTime = false;
                 break;
             }
 
@@ -181,8 +162,8 @@ internal class FigureController : MonoBehaviour
         }
         // Отменить перемещение независимо от результата проверки.
         transform.position -= movement;
-        // Если фигура упала, отметить заполненные ячейки игрового поля.
-        if (isDroped)
+        // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения, уничтожить невидимую копию фигуры.
+        if (IsDroped)
         {
             FillBlocks();
             FigureDroped?.Invoke();
@@ -224,18 +205,7 @@ internal class FigureController : MonoBehaviour
         }
     }
 
-    private void CloneFigure(float xPosition)
-    {
-        int side = 1;
-        if (xPosition < settings.ColumnCount)
-        {
-            side = -1;
-        }
-        Vector3 newPostition = transform.position + side * settings.ColumnCount * Vector3.left;
-        sceneController.SpawnNewFigure(gameObject, newPostition, true);
-    }
-
-    private void ActivateBlocks()
+    private void HideBlocks()
     {
         foreach (Transform block in rotator.transform)
         {
@@ -266,12 +236,13 @@ internal class FigureController : MonoBehaviour
 
     private void MoveToGround(float xPosition)
     {
-        if(xPosition >= 2 * settings.ColumnCount)
+        if (xPosition >= 2 * settings.ColumnCount)
         {
             transform.Translate(2 * settings.ColumnCount * Vector3.left);
-        } else
+        }
+        else
         {
-            transform.Translate(settings.ColumnCount * Vector3.right);
+            transform.Translate(2 * settings.ColumnCount * Vector3.right);
         }
     }
 }

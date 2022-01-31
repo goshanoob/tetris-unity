@@ -4,7 +4,7 @@ using UnityEngine;
 internal class GameSettings : MonoBehaviour
 {
     // Текущий режим игры.
-    private Modes currentMode = Modes.firstMode;
+   // private Modes currentMode = Modes.firstMode;
     // Событие смены режима.
     public event Action<Modes> GameModeChanged;
     // Количество строк игрового поля.
@@ -24,14 +24,9 @@ internal class GameSettings : MonoBehaviour
 
     public Modes Mode
     {
-        get => currentMode;
-        private set
-        {
-            // Установить режим и оповестить слушателей.
-            currentMode = value;
-            GameModeChanged?.Invoke(currentMode);
-        }
-    }
+        get;
+        private set;
+    } = Modes.firstMode;
 
     public int RowCount
     {
@@ -69,7 +64,7 @@ internal class GameSettings : MonoBehaviour
     {
         Instance = this;
 
-        currentMode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "firstMode"));
+        Mode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "firstMode"));
         gui.FirstModeChecked += () =>
         {
             PlayerPrefs.SetString("mode", "firstMode");
