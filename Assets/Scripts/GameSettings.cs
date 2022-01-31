@@ -3,18 +3,20 @@ using UnityEngine;
 
 internal class GameSettings : MonoBehaviour
 {
-    // Текущий режим игры.
-   // private Modes currentMode = Modes.firstMode;
-    // Событие смены режима.
-    public event Action<Modes> GameModeChanged;
+   
     // Количество строк игрового поля.
     private int rowCount = 20;
     // Количество столбцов игрового поля.
     private int columnCount = 10;
     // Увеличенное число столбцов поля.
     private int extraColumnCount = 12;
+    // Текущий режим игры.
+    private Modes currnetMode = Modes.firstMode;
     // Подключение экземпляра класса грфического интерфейса.
     [SerializeField] private GUIController gui = null;
+
+    // Событие смены режима.
+    public event Action GameModeChanged;
 
     public static GameSettings Instance
     {
@@ -69,11 +71,13 @@ internal class GameSettings : MonoBehaviour
         {
             PlayerPrefs.SetString("mode", "firstMode");
             Mode = Modes.firstMode;
+            GameModeChanged();
         };
         gui.SecondModeChecked += () =>
         {
             PlayerPrefs.SetString("mode", "secondMode");
             Mode = Modes.secondMode;
+            GameModeChanged();
         };
     }
 

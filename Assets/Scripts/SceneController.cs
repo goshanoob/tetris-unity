@@ -41,15 +41,16 @@ public class SceneController : MonoBehaviour
     {
         Instance = this;
         // Обработать смену игрвого режима и нажатие на "рестарт", перезапустив сцену.
-        settings.GameModeChanged += mode => OnRestartClicked();
+        settings.GameModeChanged += OnRestartClicked;
         gui.RestartClicked += OnRestartClicked;
-        // Инициализировать массив логических значений, в котором true - заполненная ячейка.
-        // Размерность с запасом из-за положения фигур над игровым полем до выпадания.
-        Cells = new CellingField(settings.RowCount + 3, settings.ColumnCount);
+
     }
 
     private void Start()
     {
+        // Инициализировать массив логических значений, в котором true - заполненная ячейка.
+        // Размерность с запасом из-за положения фигур над игровым полем до выпадания.
+        Cells = new CellingField(settings.RowCount + 3, settings.ColumnCount);
         // Настроить внешний вид игрового поля.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
@@ -115,7 +116,8 @@ public class SceneController : MonoBehaviour
 
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
-            GameObject figureClone = Instantiate(figure, settings.SpawnPosition + Vector3.left * settings.ColumnCount, Quaternion.identity);
+            Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
+            GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
             figureCloneController.FigureDroped += () =>
                 figureContoller.IsDroped = true;

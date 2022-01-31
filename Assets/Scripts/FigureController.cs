@@ -14,6 +14,7 @@ internal class FigureController : MonoBehaviour
 
     // Контроллер сцены.
     private SceneController sceneController = null;
+    private bool isDroped = false;
 
     private GameSettings settings = null;
     // Контроллер игрока.
@@ -21,7 +22,6 @@ internal class FigureController : MonoBehaviour
 
     // Угол вращения фигуры.
     private float angle = 90;
-    
 
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
@@ -32,8 +32,15 @@ internal class FigureController : MonoBehaviour
     // Фиксирование фигуры после падения
     public bool IsDroped
     {
-        get;
-        set;
+        get
+        {
+            return isDroped;
+        }
+        set
+        {
+            isDroped = value;
+            FillBlocks();
+        }
     }
 
     private void Awake()
@@ -68,7 +75,7 @@ internal class FigureController : MonoBehaviour
     private void Update()
     {
         // Если фигура еще не упала, сдвинуть ее вниз на одну клетку.
-        if (!IsDroped)
+        if (!isDroped)
         {
             FigureStep(dropTime);
         }
@@ -97,7 +104,7 @@ internal class FigureController : MonoBehaviour
     /// <param name="angle">Угол поворота</param>
     private void Rotate(float angle)
     {
-        if (!IsDroped)
+        if (!isDroped)
         {
             rotator.transform.Rotate(0, 0, angle);
             // Если выполненный поворот недопустим, отменить его.
@@ -131,14 +138,15 @@ internal class FigureController : MonoBehaviour
         {
             float xPosition = block.position.x;
             float yPosition = block.position.y;
+            int rowIndex = Mathf.FloorToInt(yPosition);
+            int columnIndex = Mathf.FloorToInt(xPosition);
 
-            isFilledCell = sceneController.Cells[(int)yPosition, (int)xPosition];
-
+            //isFilledCell = sceneController.Cells[rowIndex, columnIndex];
             // Если достигли земли или другой упавшей фигуры, пометить текущую фигуру упавшей.
             if (yPosition <= 0 ||
-                isFilledCell)
+                sceneController.Cells[rowIndex, columnIndex])
             {
-                IsDroped = true;
+                isDroped = true;
                 result = false;
                 break;
             }
@@ -154,7 +162,7 @@ internal class FigureController : MonoBehaviour
             if (settings.Mode == GameSettings.Modes.secondMode &&
                 (xPosition >= 2 * width || xPosition < -width))
             {
-                MoveToGround(xPosition);
+                MoveToSide(xPosition);
                 break;
             }
 
@@ -163,10 +171,10 @@ internal class FigureController : MonoBehaviour
         // Отменить перемещение независимо от результата проверки.
         transform.position -= movement;
         // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения, уничтожить невидимую копию фигуры.
-        if (IsDroped)
+        if (isDroped)
         {
-            FillBlocks();
             FigureDroped?.Invoke();
+            FillBlocks();
             DestroyFigure();
         }
         return result;
@@ -176,8 +184,9 @@ internal class FigureController : MonoBehaviour
     {
         foreach (Transform block in rotator.transform)
         {
-            int rowNumber = (int)block.position.y;
-            int columnNumber = (int)block.position.x;
+            int rowNumber = Mathf.FloorToInt(block.position.y);
+            int columnNumber = Mathf.FloorToInt(block.position.x);
+            Debug.Log($"rowNumber = {rowNumber};  columnNumber = {columnNumber}");
             sceneController.Cells.SetCell(rowNumber, columnNumber);
         }
     }
@@ -234,7 +243,7 @@ internal class FigureController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void MoveToGround(float xPosition)
+    private void MoveToSide(float xPosition)
     {
         if (xPosition >= 2 * settings.ColumnCount)
         {
