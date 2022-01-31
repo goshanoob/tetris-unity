@@ -676,6 +676,7 @@ MonoBehaviour:
   ground: {fileID: 1837990781}
   palyer: {fileID: 1540110078}
   gui: {fileID: 1540110079}
+  mainCamera: {fileID: 1209357136}
   figures:
   - {fileID: 3962296679904283571, guid: 6e9e7242afc9bab47b31a7a4c1d7185a, type: 3}
   - {fileID: 5726774566514731945, guid: 1a5e077f3435fbf42bc1bdc5b7938254, type: 3}

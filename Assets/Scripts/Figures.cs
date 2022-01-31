@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace goshanoob.Tetris
 {
+    /// <summary>
+    /// Абстарктный класс для определения фигур игры.
+    /// </summary>
     internal abstract class Figure: MonoBehaviour
     {
         [SerializeField] private double probability = 0;

@@ -8,11 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
-    // Количество сторок игрового поля.
-    private int rowCount = 20;
-    // Количество столбцов игрового поля.
-    private int columnCount = 10;
-    private int ectraColumnCount = 12;
+    
     // Генаратор случайных фигур в соответствии с вероятностями выпадения.
     private Randomizer figureRandoms;
 
@@ -20,6 +16,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private GameObject ground = null;
     [SerializeField] private PlayerController palyer = null;
     [SerializeField] private GUIController gui = null;
+    [SerializeField] private Camera mainCamera = null;
     [Header("Префабы фигур")]
     [SerializeField] private GameObject[] figures = null;
 
@@ -27,22 +24,8 @@ public class SceneController : MonoBehaviour
     public event Action<int> LineDestroy;
     // Событие, вызывающее сдвиг линиц, находящихся выше уничтоженной.
     public event Action<int> LinesShift;
-    public int RowCount
-    {
-        get => rowCount;
-        set => rowCount = value;
-    }
-    public int ColumnCount
-    {
-        get => columnCount;
-        set => columnCount = value;
-    }
-    // Место появления новых фигур.
-    public Vector3 SpawnPosition
-    {
-        get;
-        private set;
-    }
+
+
     // Автоматическое свойство для работы с заполненными ячейками игрвого поля.
     public CellingField Cells
     {
@@ -56,36 +39,37 @@ public class SceneController : MonoBehaviour
 
     private void Awake()
     {
-        
-        settings.GameModeChanged += mode =>
-        {
-            OnRestartClicked();
-            
-        };
-        //currentMode = mode;
-        gui.RestartClicked += OnRestartClicked;
         Instance = this;
-        Cells = new CellingField(RowCount + 3, ColumnCount);
-        SpawnPosition = new Vector3(columnCount / 2, rowCount , 0);
+        // Обработать смену игрвого режима и нажатие на "рестарт", перезапустив сцену.
+        settings.GameModeChanged += mode => OnRestartClicked();
+        gui.RestartClicked += OnRestartClicked;
+        // Инициализировать массив логических значений, в котором true - заполненная ячейка.
+        // Размерность с запасом из-за положения фигур над игровым полем до выпадания.
+        Cells = new CellingField(settings.RowCount + 3, settings.ColumnCount);
     }
 
     private void Start()
     {
-        // Расширить игровое поле.
+        // Настроить внешний вид игрового поля.
         if(settings.Mode == GameSettings.Modes.secondMode)
         {
-            SetWidth(ectraColumnCount);
-            ColumnCount = ectraColumnCount;
+            SetUpGround();
         }
         // Создать фигуры.
         CreateFigures();
-        // Сгенерировать фигуру на сцене.
-        SpawnNewFigure();
+        // Вызвать случайную фигуру на сцену.
+        SpawnNewFigure(GetRandomFigure(), settings.SpawnPosition);
+
     }
 
-    private void SetWidth(int width)
+    private void SetUpGround()
     {
-        ground.transform.localScale = new Vector3(width, rowCount, 1);
+        int columns = settings.ColumnCount;
+        int rows = settings.RowCount;
+
+        ground.transform.localScale = new Vector3(columns, rows, 1);
+        ground.transform.position = new Vector3(columns / 2, rows / 2, 0);
+        mainCamera.transform.position = new Vector3(columns / 2, rows / 2, -100);
     }
 
     private void CreateFigures()
@@ -106,17 +90,24 @@ public class SceneController : MonoBehaviour
             figureRandoms = new Randomizer(probabilities);
     }
 
+    private GameObject GetRandomFigure()
+    {
+        return figures[figureRandoms.GetNextNumber()];
+    }
+
     /// <summary>
     /// Метод создания случайной фигуры.
     /// </summary>
-    private void SpawnNewFigure()
+    public void SpawnNewFigure(GameObject figure, Vector3 position, bool isClonable = false)
     {
-        // Создать фигуру со случайным номером.
-        int figureNumber = figureRandoms.GetNextNumber();
-        GameObject newFigure = Instantiate(figures[figureNumber], SpawnPosition, Quaternion.identity);
-
-        // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
+        GameObject newFigure = Instantiate(figure, position, Quaternion.identity);
+        // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
+        if (isClonable)
+        {
+            figureContoller.isClone = true;
+        }
+        // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += OnFigureDroped;
     }
 
@@ -128,7 +119,7 @@ public class SceneController : MonoBehaviour
         // Проверить, не появились ли заполненные линии.
         CheckLines();
         // Сгенерировать новую фигуру.
-        SpawnNewFigure();
+        SpawnNewFigure(GetRandomFigure(), settings.SpawnPosition);
     }
 
     /// <summary>
@@ -136,7 +127,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     private void CheckLines()
     {
-        for (int i = 0; i < RowCount; i++)
+        for (int i = 0; i < settings.RowCount; i++)
         {
             // Если линия полностью заполнена, выполнить действия.
             if (Cells.CheckLine(i))
@@ -155,12 +146,15 @@ public class SceneController : MonoBehaviour
 
     public void SpawnNewFigure2(GameObject originFigure)
     {
-        Vector3 newPosition = originFigure.transform.position + columnCount * Vector3.left;
+        Vector3 newPosition = originFigure.transform.position + settings.ColumnCount * Vector3.left;
         GameObject newFigure = Instantiate(originFigure, newPosition, Quaternion.identity);
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         figureContoller.isClone = true;
     }
+
+
+
 
     private void OnRestartClicked()
     {
