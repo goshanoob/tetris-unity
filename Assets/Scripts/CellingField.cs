@@ -55,12 +55,18 @@ namespace goshanoob.Tetris
         /// <returns></returns>
         public bool CheckLine(int lineNumber)
         {
+            if(lineNumber >= rowCount || lineNumber < 0)
+            {
+                return false;
+            }
+
             bool isFill = true;
             for (int i = 0; i < columnCount; i++)
             {
                 if (!cells[lineNumber, i])
                 {
                     isFill = false;
+                    break;
                 }
             }
             return isFill;

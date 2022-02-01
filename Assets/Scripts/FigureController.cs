@@ -26,12 +26,8 @@ internal class FigureController : MonoBehaviour
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
 
-    // Имя блока.
-    public string name = null;
-
     // Событие окончания падения фигуры.
     public event Action FigureDroped;
-
 
     public FigureController Clone
     {
@@ -76,7 +72,7 @@ internal class FigureController : MonoBehaviour
             FigureStep(dropTime);
         }
         // Скрыть блоки вне игрвого поля.
-         HideBlocks();
+        HideBlocks();
     }
 
     private void FigureStep(float maxTime)
@@ -120,7 +116,7 @@ internal class FigureController : MonoBehaviour
                 FigureDroped?.Invoke();
             }
         }
-        
+
         return result;
     }
 
@@ -196,7 +192,7 @@ internal class FigureController : MonoBehaviour
         {
             FillBlocks();
             FigureDroped?.Invoke();
-            if(Clone != null)
+            if (Clone != null)
             {
                 Clone.IsDroped = true;
             }

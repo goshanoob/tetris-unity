@@ -3,39 +3,48 @@ using UnityEngine;
 
 internal class GameSettings : MonoBehaviour
 {
-   
     // Количество строк игрового поля.
     private int rowCount = 20;
     // Количество столбцов игрового поля.
     private int columnCount = 10;
     // Увеличенное число столбцов поля.
     private int extraColumnCount = 12;
-    // Текущий режим игры.
-    private Modes currnetMode = Modes.firstMode;
     // Подключение экземпляра класса грфического интерфейса.
     [SerializeField] private GUIController gui = null;
 
     // Событие смены режима.
     public event Action GameModeChanged;
 
+    /// <summary>
+    /// Экземпляр игровых настроек.
+    /// </summary>
     public static GameSettings Instance
     {
         get;
         private set;
     }
 
+    /// <summary>
+    /// Текущий режим игры.
+    /// </summary>
     public Modes Mode
     {
         get;
         private set;
     } = Modes.firstMode;
 
+    /// <summary>
+    /// Число строк игрвого поля.
+    /// </summary>
     public int RowCount
     {
         get => rowCount;
         set => rowCount = value;
     }
-    
+
+    /// <summary>
+    /// Число солбцов игрового поля.
+    /// </summary>
     public int ColumnCount
     {
         get
@@ -48,7 +57,25 @@ internal class GameSettings : MonoBehaviour
         }
     }
 
-    // Место появления новых фигур.
+    /// <summary>
+    /// Необходимое число подряд идущих собранных линий для их уничтожения. 
+    /// </summary>
+    public int LinesForDestroy
+    {
+        get
+        {
+            int count = 1;
+            if (Mode == Modes.secondMode)
+            {
+                count = 2;
+            }
+            return count;
+        }
+    }
+
+    /// <summary>
+    /// Коориданты появления новых фигур.
+    /// </summary>
     public Vector3 SpawnPosition
     {
         get
@@ -60,6 +87,21 @@ internal class GameSettings : MonoBehaviour
             }
             return postition;
         }
+    }
+
+    /// <summary>
+    /// Перечисление режимов игры.
+    /// </summary>
+    public enum Modes
+    {
+        /// <summary>
+        /// Режим с семью фигурами.
+        /// </summary>
+        firstMode = 7,
+        /// <summary>
+        /// Режим с десятью фигурами.
+        /// </summary>
+        secondMode = 10,
     }
 
     private void Awake()
@@ -79,18 +121,5 @@ internal class GameSettings : MonoBehaviour
             Mode = Modes.secondMode;
             GameModeChanged();
         };
-    }
-
-
-    public enum Modes
-    {
-        /// <summary>
-        /// Режим с семью фигурами.
-        /// </summary>
-        firstMode = 7,
-        /// <summary>
-        /// Режим с десятью фигурами.
-        /// </summary>
-        secondMode = 10,
     }
 }

@@ -6,13 +6,13 @@ using UnityEngine;
 /// </summary>
 internal class PlayerController : MonoBehaviour
 {
-    private FigureController figure;
+    private int score = 0;
+
     public event Action<int> ScoreChanged;
     public event Action RotateClick;
     public event Action DownClick;
-    private int score = 0;
-
     public event Action<Vector3> ButtonClick;
+
     public int Score
     {
         get => score;
@@ -33,6 +33,7 @@ internal class PlayerController : MonoBehaviour
     {
         Instance = this;
     }
+
     private void Update()
     {
         bool left = Input.GetKeyDown(KeyCode.LeftArrow);
@@ -61,6 +62,5 @@ internal class PlayerController : MonoBehaviour
         {
             RotateClick?.Invoke();
         }
-        
     }
 }

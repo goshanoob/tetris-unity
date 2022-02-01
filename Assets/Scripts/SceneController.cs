@@ -78,16 +78,20 @@ public class SceneController : MonoBehaviour
         mainCamera.transform.position = new Vector3(halfColumns, halfRows, -100);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void CreateFigures()
     {
+        // Получить массив вероятностей выпадения фигур.
         int figuresCount = (int)settings.Mode;
         double[] probabilities = new double[figuresCount];
-
         for (int i = 0; i < figuresCount; i++)
         {
             probabilities[i] = figures[i].GetComponent<Figure>().Probability;
         }
 
+        // Если выбран второй режим игры, изменить вероятность выпадения седьмой фигуры.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
             probabilities[6] = figures[6].GetComponent<Figure7>().SecondProbability;
@@ -96,10 +100,7 @@ public class SceneController : MonoBehaviour
         figureRandoms = new Randomizer(probabilities);
     }
 
-    private GameObject GetRandomFigure()
-    {
-        return figures[figureRandoms.GetNextNumber()];
-    }
+    private GameObject GetRandomFigure() => figures[figureRandoms.GetNextNumber()];
 
     /// <summary>
     /// Метод создания случайной фигуры.
@@ -113,16 +114,39 @@ public class SceneController : MonoBehaviour
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += OnFigureDroped;
-        figureContoller.name = $"Фигура {++counter}";
-
+        // Если выбран второй режим игры, создать фигуру, дублирующую выпавшую.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
             Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
             GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
-            figureCloneController.name = $"Клон фигуры {counter}";
-
             figureContoller.Clone = figureCloneController;
+        }
+    }
+
+    /// <summary>
+    /// Проверить заполненность линий.
+    /// </summary>
+    private void CheckLines()
+    {
+        for (int i = 0; i < settings.RowCount; i++)
+        {
+            for (int k = 0; k < settings.LinesForDestroy; k++)
+            {
+                int lineNumber = i + k;
+                // Если линия полностью заполнена, выполнить действия.
+                if (Cells.CheckLine(lineNumber))
+                {
+                    // Вызвать у всех фигур событие для удаления строки.
+                    LineDestroy?.Invoke(lineNumber);
+                    // Сдвинуть верхние строки на место удаленной.
+                    Cells.ShiftLines(i);
+                    i--;
+                    // Вызвать событие сдига блоков у каждой фигуры.
+                    LinesShift?.Invoke(lineNumber);
+                    palyer.Score++;
+                }
+            }
         }
     }
 
@@ -138,27 +162,8 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Проверить заполненность линий.
+    /// Обработчик перезапуска игры.
     /// </summary>
-    private void CheckLines()
-    {
-        for (int i = 0; i < settings.RowCount; i++)
-        {
-            // Если линия полностью заполнена, выполнить действия.
-            if (Cells.CheckLine(i))
-            {
-                // Вызвать у всех фигур событие для удаления строки.
-                LineDestroy?.Invoke(i);
-                // Сдвинуть верхние строки на место удаленной.
-                Cells.ShiftLines(i);
-                i--;
-                // Вызвать событие сдига блоков у каждой фигуры.
-                LinesShift?.Invoke(i);
-                palyer.Score++;
-            }
-        }
-    }
-
     private void OnRestartClicked()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
