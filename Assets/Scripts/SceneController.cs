@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
+    private int counter = 0;
     // Генаратор случайных фигур в соответствии с вероятностями выпадения.
     private Randomizer figureRandoms;
 
@@ -112,17 +113,16 @@ public class SceneController : MonoBehaviour
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += OnFigureDroped;
-
+        figureContoller.name = $"Фигура {++counter}";
 
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
             Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
             GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
-            figureCloneController.FigureDroped += () =>
-                figureContoller.IsDroped = true;
-            figureContoller.FigureDroped += () =>
-                figureCloneController.IsDroped = true;
+            figureCloneController.name = $"Клон фигуры {counter}";
+
+            figureContoller.Clone = figureCloneController;
         }
     }
 

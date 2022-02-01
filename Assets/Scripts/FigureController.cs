@@ -26,8 +26,18 @@ internal class FigureController : MonoBehaviour
     // Счетчик времени после последнего сдвига фигуры вниз в секундах.
     private float timer = 0;
 
+    // Имя блока.
+    public string name = null;
+
     // Событие окончания падения фигуры.
     public event Action FigureDroped;
+
+
+    public FigureController Clone
+    {
+        get;
+        set;
+    }
 
     // Фиксирование фигуры после падения
     public bool IsDroped
@@ -39,7 +49,6 @@ internal class FigureController : MonoBehaviour
         set
         {
             isDroped = value;
-            FillBlocks();
         }
     }
 
@@ -59,19 +68,6 @@ internal class FigureController : MonoBehaviour
         playerController.DownClick += () => FigureStep(extraDropTime); ;
     }
 
-    private void FigureStep(float maxTime)
-    {
-        // Добавить время кадра к счетчику времени.
-        // Время контролируется для равномерного движения фигуры вниз.
-        timer += Time.deltaTime;
-        // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
-        if (!IsDroped && timer >= maxTime)
-        {
-            MoveFigure(Vector3.down);
-            timer = 0;
-        }
-    }
-
     private void Update()
     {
         // Если фигура еще не упала, сдвинуть ее вниз на одну клетку.
@@ -80,7 +76,20 @@ internal class FigureController : MonoBehaviour
             FigureStep(dropTime);
         }
         // Скрыть блоки вне игрвого поля.
-        // HideBlocks();
+         HideBlocks();
+    }
+
+    private void FigureStep(float maxTime)
+    {
+        // Добавить время кадра к счетчику времени.
+        // Время контролируется для равномерного движения фигуры вниз.
+        timer += Time.deltaTime;
+        // Если время превысело допустимое, передвинуть фигуру вниз и запустить таймер заново.
+        if (!isDroped && timer >= maxTime)
+        {
+            MoveFigure(Vector3.down);
+            timer = 0;
+        }
     }
 
     /// <summary>
@@ -89,13 +98,30 @@ internal class FigureController : MonoBehaviour
     /// <param name="movement">Относительная величина перемещения</param>
     private void MoveFigure(Vector3 movement)
     {
-        if (!IsDroped)
+        if (!isDroped)
         {
-            if (isCorrectMove(movement))
+            if (CloneCanMove(movement) && isCorrectMove(movement))
             {
                 transform.Translate(movement);
             }
         }
+    }
+
+    private bool CloneCanMove(Vector3 movement)
+    {
+        bool result = true;
+        if (Clone != null)
+        {
+            result = Clone.isCorrectMove(movement);
+            if (!result)
+            {
+                isDroped = true;
+                FillBlocks();
+                FigureDroped?.Invoke();
+            }
+        }
+        
+        return result;
     }
 
     /// <summary>
@@ -121,16 +147,12 @@ internal class FigureController : MonoBehaviour
     /// </summary>
     /// <param name="movement">Величина перемещения.</param>
     /// <returns></returns>
-    private bool isCorrectMove(Vector3 movement)
+    public bool isCorrectMove(Vector3 movement)
     {
         // Результат проверки.
         bool result = true;
-
         // Расстояние от центра игрового поля до крайних положений по горизонтали и вертикали.
         int width = settings.ColumnCount;
-
-        // Пометить клетку как незаполненную.
-        bool isFilledCell = false;
         // Выполнить перемещение, чтобы првоерить его допустимость.
         transform.position += movement;
         // Перебрать все блоки фигуры.
@@ -141,7 +163,6 @@ internal class FigureController : MonoBehaviour
             int rowIndex = Mathf.FloorToInt(yPosition);
             int columnIndex = Mathf.FloorToInt(xPosition);
 
-            //isFilledCell = sceneController.Cells[rowIndex, columnIndex];
             // Если достигли земли или другой упавшей фигуры, пометить текущую фигуру упавшей.
             if (yPosition <= 0 ||
                 sceneController.Cells[rowIndex, columnIndex])
@@ -173,9 +194,12 @@ internal class FigureController : MonoBehaviour
         // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения, уничтожить невидимую копию фигуры.
         if (isDroped)
         {
-            FigureDroped?.Invoke();
             FillBlocks();
-            DestroyFigure();
+            FigureDroped?.Invoke();
+            if(Clone != null)
+            {
+                Clone.IsDroped = true;
+            }
         }
         return result;
     }
@@ -186,7 +210,6 @@ internal class FigureController : MonoBehaviour
         {
             int rowNumber = Mathf.FloorToInt(block.position.y);
             int columnNumber = Mathf.FloorToInt(block.position.x);
-            Debug.Log($"rowNumber = {rowNumber};  columnNumber = {columnNumber}");
             sceneController.Cells.SetCell(rowNumber, columnNumber);
         }
     }
@@ -229,18 +252,6 @@ internal class FigureController : MonoBehaviour
                 block.gameObject.SetActive(true);
             }
         }
-    }
-
-    private void DestroyFigure()
-    {
-        foreach (Transform block in rotator.transform)
-        {
-            if (block.gameObject.activeSelf)
-            {
-                return;
-            }
-        }
-        Destroy(gameObject);
     }
 
     private void MoveToSide(float xPosition)
