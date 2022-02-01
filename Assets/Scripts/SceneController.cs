@@ -94,12 +94,21 @@ public class SceneController : MonoBehaviour
         // Если выбран второй режим игры, изменить вероятность выпадения седьмой фигуры.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
-            probabilities[6] = figures[6].GetComponent<Figure7>().SecondProbability;
+            // Убедиться, что седьмая фигура подключена в седьмую ячейку в редакторе.
+            Figure7 figure7 = figures[6].GetComponent<Figure7>();
+            if (figure7 != null)
+            {
+                probabilities[6] = figure7.SecondProbability;
+            }
         }
         // Получить экземпляр структуры для генерации случайных значений с учетом их вероятности.
         figureRandoms = new Randomizer(probabilities);
     }
 
+    /// <summary>
+    /// Метод, возвращающий случайную фигуру из массива фигур.
+    /// </summary>
+    /// <returns></returns>
     private GameObject GetRandomFigure() => figures[figureRandoms.GetNextNumber()];
 
     /// <summary>
@@ -117,59 +126,43 @@ public class SceneController : MonoBehaviour
         // Если выбран второй режим игры, создать фигуру, дублирующую выпавшую.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
+            // Позиция фигуры-копии симметрична относительно левой границы игрового поля.
             Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
             GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
+            // Сохранить ссылку на клон в классе фигуры-оригинала для взаимосвязанного движения.
             figureContoller.Clone = figureCloneController;
         }
     }
 
     /// <summary>
-    /// Проверить заполненность линий.
+    /// Метод проверки и удаления заполненных линий.
     /// </summary>
     private void CheckLines()
     {
-
-        /*
         for (int i = 0; i < settings.RowCount; i++)
         {
-            // Если линия полностью заполнена, выполнить действия.
-            if (Cells.CheckLine(i))
-            {
-                // Вызвать у всех фигур событие для удаления строки.
-                LineDestroy?.Invoke(i);
-                // Сдвинуть верхние строки на место удаленной.
-                Cells.ShiftLines(i);
-                i--;
-                // Вызвать событие сдига блоков у каждой фигуры.
-                LinesShift?.Invoke(i);
-                palyer.Score++;
-            }
-
-        }
-        */
-
-        for (int i = 0; i < settings.RowCount; i++)
-        {
-
+            // Проверить заполненность линий. Достаточное число линий для удаления зависит от выбранного режима.
             bool willDestroy = true;
             for (int k = 0; k < settings.LinesForDestroy; k++)
             {
                 willDestroy = willDestroy && Cells.CheckLine(i + k);
             }
-
+            // Если число заполненных линий достаточно, удалить каждую из них по очереди.
             if (willDestroy)
             {
                 for (int k = 0; k < settings.LinesForDestroy; k++)
                 {
+                    // Вызвать событие удаления i-й линии у каждой фигуры на сцене.
                     LineDestroy?.Invoke(i);
+                    // Сдвинуть ячейки в массиве заполненных ячеек.
                     Cells.ShiftLines(i);
+                    // Вызвать событие сдвига линий выше i-й у каждой фигуры.
                     LinesShift?.Invoke(i);
                     palyer.Score++;
                 }
                 i--;
             }
-            
         }
     }
 
@@ -189,6 +182,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     private void OnRestartClicked()
     {
+        // Перезагузить текущую сцену.
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

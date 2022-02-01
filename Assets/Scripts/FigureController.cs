@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-///  Класс, описывающий поведение фигуры.
+///  Класс для управления фигурой.
 /// </summary>
 internal class FigureController : MonoBehaviour
 {
@@ -13,10 +13,10 @@ internal class FigureController : MonoBehaviour
     [SerializeField] private float extraDropTime = 0.1f;
 
     // Контроллер сцены.
-    private SceneController sceneController = null;
-    private bool isDroped = false;
+    protected SceneController sceneController = null;
+    protected bool isDroped = false;
 
-    private GameSettings settings = null;
+    protected GameSettings settings = null;
     // Контроллер игрока.
     private PlayerController playerController = null;
 
@@ -27,7 +27,7 @@ internal class FigureController : MonoBehaviour
     private float timer = 0;
 
     // Событие окончания падения фигуры.
-    public event Action FigureDroped;
+    protected event Action FigureDroped;
 
     public FigureController Clone
     {
@@ -96,14 +96,14 @@ internal class FigureController : MonoBehaviour
     {
         if (!isDroped)
         {
-            if (CloneCanMove(movement) && isCorrectMove(movement))
+            if (isMovableClone(movement) && isCorrectMove(movement))
             {
                 transform.Translate(movement);
             }
         }
     }
 
-    private bool CloneCanMove(Vector3 movement)
+    private bool isMovableClone(Vector3 movement)
     {
         bool result = true;
         if (Clone != null)
@@ -116,7 +116,6 @@ internal class FigureController : MonoBehaviour
                 FigureDroped?.Invoke();
             }
         }
-
         return result;
     }
 
@@ -200,7 +199,7 @@ internal class FigureController : MonoBehaviour
         return result;
     }
 
-    private void FillBlocks()
+    protected void FillBlocks()
     {
         foreach (Transform block in rotator.transform)
         {
