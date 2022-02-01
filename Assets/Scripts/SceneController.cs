@@ -129,24 +129,47 @@ public class SceneController : MonoBehaviour
     /// </summary>
     private void CheckLines()
     {
+
+        /*
         for (int i = 0; i < settings.RowCount; i++)
         {
+            // Если линия полностью заполнена, выполнить действия.
+            if (Cells.CheckLine(i))
+            {
+                // Вызвать у всех фигур событие для удаления строки.
+                LineDestroy?.Invoke(i);
+                // Сдвинуть верхние строки на место удаленной.
+                Cells.ShiftLines(i);
+                i--;
+                // Вызвать событие сдига блоков у каждой фигуры.
+                LinesShift?.Invoke(i);
+                palyer.Score++;
+            }
+
+        }
+        */
+
+        for (int i = 0; i < settings.RowCount; i++)
+        {
+
+            bool willDestroy = true;
             for (int k = 0; k < settings.LinesForDestroy; k++)
             {
-                int lineNumber = i + k;
-                // Если линия полностью заполнена, выполнить действия.
-                if (Cells.CheckLine(lineNumber))
+                willDestroy = willDestroy && Cells.CheckLine(i + k);
+            }
+
+            if (willDestroy)
+            {
+                for (int k = 0; k < settings.LinesForDestroy; k++)
                 {
-                    // Вызвать у всех фигур событие для удаления строки.
-                    LineDestroy?.Invoke(lineNumber);
-                    // Сдвинуть верхние строки на место удаленной.
+                    LineDestroy?.Invoke(i);
                     Cells.ShiftLines(i);
-                    i--;
-                    // Вызвать событие сдига блоков у каждой фигуры.
-                    LinesShift?.Invoke(lineNumber);
+                    LinesShift?.Invoke(i);
                     palyer.Score++;
                 }
+                i--;
             }
+            
         }
     }
 

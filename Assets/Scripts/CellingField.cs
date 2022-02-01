@@ -1,3 +1,4 @@
+using System;
 namespace goshanoob.Tetris
 {
     /// <summary>
@@ -82,7 +83,13 @@ namespace goshanoob.Tetris
             {
                 for (int j = 0; j < columnCount; j++)
                 {
-                    cells[i, j] = cells[i + 1, j];
+                    try
+                    {
+                        cells[i, j] = cells[i + 1, j];
+                    }catch(Exception e)
+                    {
+                        int a = 5;
+                    }
                 }
             }
         }
