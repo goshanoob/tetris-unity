@@ -1,5 +1,5 @@
-using goshanoob.Tetris;
 using UnityEngine;
+using goshanoob.Tetris;
 
 /// <summary>
 /// Менеджер блоков фигуры.
