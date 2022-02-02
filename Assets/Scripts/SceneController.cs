@@ -27,9 +27,14 @@ public class SceneController : MonoBehaviour
     public event Action<int> LineDestroy;
 
     /// <summary>
-    /// Событие, вызывающее сдвиг линиц, находящихся выше уничтоженной.
+    /// Событие, вызывающее сдвиг линий, находящихся выше уничтоженной.
     /// </summary>
     public event Action<int> LinesShift;
+
+    /// <summary>
+    /// Событие окончания игры.
+    /// </summary>
+    public event Action GameOver;
 
     /// <summary>
     /// Свойство для доступа к заполненным ячейкам игрвого поля.
@@ -57,7 +62,6 @@ public class SceneController : MonoBehaviour
         settings.GameModeChanged += OnRestartClicked;
         /// Обработать нажатие на кнопку перезапуска в графическом меню.
         gui.RestartClicked += OnRestartClicked;
-
     }
 
     private void Start()
@@ -190,6 +194,8 @@ public class SceneController : MonoBehaviour
     {
         // Проверить, не появились ли заполненные линии.
         CheckLines();
+        // Проверить, не настал ли конец игры.
+        CheckGameOver();
         // Сгенерировать новую фигуру.
         SpawnNewFigure();
     }
@@ -201,5 +207,19 @@ public class SceneController : MonoBehaviour
     {
         // Перезагузить текущую сцену.
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void CheckGameOver()
+    {
+        for (int i = 0; i < settings.ColumnCount; i++)
+        {
+            // Если хотя бы одна заполненная ячейка игрового поля оказалась выше видимой его части на 2 позиции, вызвать событие окончания игры.
+            if (Cells[settings.RowCount + 1, i])
+            {
+                GameOver();
+                break;
+            }
+        }
+
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal class GameSettings : MonoBehaviour
+public class GameSettings : MonoBehaviour
 {
     [SerializeField] private int rowCount = 20; // количество строк игрового поля
     [SerializeField] private int columnCount = 10; // количество столбцов игрового поля
@@ -52,7 +52,7 @@ internal class GameSettings : MonoBehaviour
     {
         get
         {
-            if(Mode == Modes.secondMode)
+            if (Mode == Modes.secondMode)
             {
                 return extraColumnCount;
             }
@@ -96,6 +96,22 @@ internal class GameSettings : MonoBehaviour
             }
             return postition;
         }
+    }
+
+    /// <summary>
+    /// Время неподвижности фигуры перед очередным перемещением вниз.
+    /// </summary>
+    public float DropTime
+    {
+        get => dropTime;
+    }
+
+    /// <summary>
+    /// Время неподвижности фигуры перед очередным перемещением вниз в режиме ускоренного перемещения.
+    /// </summary>
+    public float ExtraDropTime
+    {
+        get => extraDropTime;
     }
 
     /// <summary>

@@ -4,25 +4,47 @@ using UnityEngine;
 /// <summary>
 ///  Класс, описывающий игрока в тетрис.
 /// </summary>
-internal class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
+    /// <summary>
+    /// Количество очков, набранное игроком.
+    /// </summary>
     private int score = 0;
 
+    /// <summary>
+    /// Событие изменения счета.
+    /// </summary>
     public event Action<int> ScoreChanged;
+    /// <summary>
+    /// Событие вращения фигуры.
+    /// </summary>
     public event Action RotateClick;
+    /// <summary>
+    /// Событие нажатия кнопки вниз.
+    /// </summary>
     public event Action DownClick;
-    public event Action<Vector3> ButtonClick;
+    /// <summary>
+    /// Событие нажатия кнопкок вбок.
+    /// </summary>
+    public event Action<Vector3> SideClick;
 
+    /// <summary>
+    /// Количество набранных очков.
+    /// </summary>
     public int Score
     {
         get => score;
         set
         {
             score = value;
+            // Сгенерировать событие изменения счета при установке свойства.
             ScoreChanged?.Invoke(score);
         }
     }
 
+    /// <summary>
+    /// Экзепляр класса, описывающего игрока.
+    /// </summary>
     public static PlayerController Instance
     {
         get;
@@ -31,6 +53,7 @@ internal class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        // Инициализация свойства для доступа к текущему экземпляру данного класса.
         Instance = this;
     }
 
@@ -40,15 +63,15 @@ internal class PlayerController : MonoBehaviour
         bool right = Input.GetKeyDown(KeyCode.RightArrow);
         bool down = Input.GetKey(KeyCode.DownArrow);
         bool space = Input.GetKeyDown(KeyCode.Space);
-        
+
         // Если нажата клавиша, выполнить перемещение фигуры.
         if (left)
         {
-            ButtonClick?.Invoke(Vector3.left);
+            SideClick?.Invoke(Vector3.left);
         }
         else if (right)
         {
-            ButtonClick?.Invoke(Vector3.right);
+            SideClick?.Invoke(Vector3.right);
         }
 
         // Если нажата кнопка вниз, ускорить движение.

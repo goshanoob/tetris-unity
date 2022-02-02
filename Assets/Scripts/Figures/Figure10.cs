@@ -1,6 +1,9 @@
 ﻿namespace goshanoob.Tetris
 {
-    internal class Figure10 : Figure
+    /// <summary>
+    /// Класс, описывающий W-образную фигуру.
+    /// </summary>
+    public class Figure10 : Figure
     {
         public Figure10()
         {

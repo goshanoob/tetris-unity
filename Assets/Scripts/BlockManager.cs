@@ -1,14 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+using goshanoob.Tetris;
 using UnityEngine;
 
-internal class BlockManager : FigureController
+/// <summary>
+/// Класс реализующий действия с блоками фигур.
+/// </summary>
+public class BlockManager : MonoBehaviour, IBlocksManagement
 {
-    [SerializeField] private FigureController figure = null;
+    [SerializeField] private GameSettings settings = null;
+    [SerializeField] private SceneController sceneController = null;
+    [SerializeField] private GameObject rotator = null;
 
-    private void FillBlocks()
+    public void FillBlocks()
     {
-        foreach (Transform block in figure.rotator.transform)
+        foreach (Transform block in rotator.transform)
         {
             int rowNumber = Mathf.FloorToInt(block.position.y);
             int columnNumber = Mathf.FloorToInt(block.position.x);
@@ -16,7 +20,7 @@ internal class BlockManager : FigureController
         }
     }
 
-    private void OnLineDestroy(int lineNumber)
+    public void OnLineDestroy(int lineNumber)
     {
         foreach (Transform block in rotator.transform)
         {
@@ -27,7 +31,7 @@ internal class BlockManager : FigureController
         }
     }
 
-    private void OnLinesShift(int lineNumber)
+    public void OnLinesShift(int lineNumber)
     {
         foreach (Transform block in rotator.transform)
         {
@@ -39,7 +43,7 @@ internal class BlockManager : FigureController
         }
     }
 
-    private void HideBlocks()
+    public void HideBlocks()
     {
         foreach (Transform block in rotator.transform)
         {

@@ -5,9 +5,9 @@ namespace goshanoob.Tetris
     /// <summary>
     /// Структура для работы со случайными величинами.
     /// </summary>
-    internal struct Randomizer
+    public struct Randomizer
     {
-        private double[] chances;
+        private double[] chances; // массив вероятностей
 
         /// <summary>
         /// Создать экземпляр структуры, передав вероятности нескольких событий.
@@ -21,7 +21,7 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Метод возвращает номер выпавшего события с учетом его вероятности.
+        /// Вернуть номер выпавшего события с учетом его вероятности.
         /// </summary>
         /// <returns>Номер случайного события</returns>
         public int GetNextNumber()
@@ -29,10 +29,11 @@ namespace goshanoob.Tetris
             int result = 0;
             double randomValue = new Random().NextDouble();
             double sum = 0;
-            for(int i = 0, count = chances.Length; i < count; i++)
+
+            for (int i = 0, count = chances.Length; i < count; i++)
             {
                 sum += chances[i];
-                if(sum > randomValue)
+                if (sum > randomValue)
                 {
                     result = i;
                     break;
@@ -51,7 +52,8 @@ namespace goshanoob.Tetris
             {
                 sum += value;
             }
-            if (Math.Abs(sum -1) > 1e-6)
+            // Если сумма вероятностей отлична от 1, сгенерировать исключение.
+            if (Math.Abs(sum - 1) > 1e-6)
             {
                 throw new ArgumentException("The sum of the probabilities is not equal to one");
             }

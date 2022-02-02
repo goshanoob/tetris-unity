@@ -6,9 +6,13 @@ namespace goshanoob.Tetris
     /// <summary>
     /// Абстарктный класс для определения фигур игры.
     /// </summary>
-    internal abstract class Figure: MonoBehaviour
+    public abstract class Figure : MonoBehaviour
     {
-        [SerializeField] private double probability = 0;
+        [SerializeField] private double probability = 0; // вероятность выпадения фигуры
+
+        /// <summary>
+        /// Вероятность выпадения фигуры.
+        /// </summary>
         public double Probability
         {
             get
@@ -28,6 +32,6 @@ namespace goshanoob.Tetris
             }
         }
     }
-        
+
 
 }

@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FigureClone : MonoBehaviour
-{
+{/*
     private bool isMovableClone(Vector3 movement)
     {
         bool result = true;
@@ -30,5 +28,5 @@ public class FigureClone : MonoBehaviour
         {
             transform.Translate(2 * settings.ColumnCount * Vector3.right);
         }
-    }
+    }*/
 }

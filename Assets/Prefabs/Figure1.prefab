@@ -326,9 +326,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotator: {fileID: 3962296679690370507}
-  dropSpeed: 1
-  speedMultiplier: 2
-  dropTime: 1
 --- !u!114 &8752085719658245370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe470464fd97d3249b73c1dc7da9d101, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  probability: 0.1
 --- !u!1 &3962296680458490568
 GameObject:
   m_ObjectHideFlags: 0

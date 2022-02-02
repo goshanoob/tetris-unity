@@ -1,14 +1,16 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 /// <summary>
 /// Класс для работы с графическим интерфейсом.
 /// </summary>
-internal class GUIController : MonoBehaviour
+public class GUIController : MonoBehaviour
 {
     [SerializeField] private Text scoreLabel = null; // подпись набранных очков
     [SerializeField] private PlayerController player = null; // объект игрока
+    [SerializeField] private SceneController sceneController = null; // объект контроллера сцены
+    [SerializeField] private ResultDialog resultDialog = null; // объект окна с результатом игры
 
     /// <summary>
     /// Событие нажатия кнопки перезагрузки игры.
@@ -29,6 +31,8 @@ internal class GUIController : MonoBehaviour
     {
         // Добавить обработчик к собтию объекта игрока, возникающем при изменении счета.
         player.ScoreChanged += OnScoreChanged;
+        // Добавить обработчик к событию, возникающем в контроллере сцены при окончании игры.
+        sceneController.GameOver += OnGameOver;
     }
 
     /// <summary>
@@ -38,6 +42,14 @@ internal class GUIController : MonoBehaviour
     private void OnScoreChanged(int score)
     {
         scoreLabel.text = score.ToString();
+    }
+
+    /// <summary>
+    /// Обработчик события окончания игры.
+    /// </summary>
+    private void OnGameOver()
+    {
+        resultDialog.Open(player.Score);
     }
 
     /// <summary>

@@ -1,7 +1,13 @@
 ﻿namespace goshanoob.Tetris
 {
-    internal class Figure7 : Figure
+    /// <summary>
+    /// Класс, описывающий T-образную фигуру.
+    /// </summary>
+    public class Figure7 : Figure
     {
+        /// <summary>
+        /// Альтернативная вероятность выпадения фигуры.
+        /// </summary>
         public float SecondProbability
         {
             get => 0.05f;
