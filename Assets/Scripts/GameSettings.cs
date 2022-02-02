@@ -115,7 +115,7 @@ public class GameSettings : MonoBehaviour
     }
 
     /// <summary>
-    /// Перечисление режимов игры.
+    /// Режимы игры.
     /// </summary>
     public enum Modes
     {

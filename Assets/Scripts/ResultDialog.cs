@@ -1,27 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Р”РёР°Р»РѕРіРѕРІРѕРµ РѕРєРЅРѕ РѕР± РѕРєРѕРЅС‡Р°РЅРёРё РёРіСЂС‹.
+/// </summary>
 public class ResultDialog : MonoBehaviour
 {
-    [SerializeField] private Text resultLabel = null; // подпись с результатом игры
+    [SerializeField] private Text resultLabel = null; // РїРѕРґРїРёСЃСЊ СЃ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј РёРіСЂС‹
 
     private void Start()
     {
-        // Закрыть окно при старте.
+        // Р—Р°РєСЂС‹С‚СЊ РѕРєРЅРѕ РїСЂРё СЃС‚Р°СЂС‚Рµ.
         Close();
     }
 
     /// <summary>
-    /// Открыть диалоговое окно  с результатами игры.
+    /// РћС‚РєСЂС‹С‚СЊ РґРёР°Р»РѕРіРѕРІРѕРµ РѕРєРЅРѕ СЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°РјРё РёРіСЂС‹.
     /// </summary>
     public void Open(int score)
     {
-        resultLabel.text = $"Ваш результат: {score} линия(-ий)";
+        resultLabel.text = $"Р’Р°С€ СЂРµР·СѓР»СЊС‚Р°С‚: {score} Р»РёРЅРёСЏ(-РёР№)";
         gameObject.SetActive(true);
     }
 
     /// <summary>
-    /// Закрыть диалоговое окно.
+    /// Р—Р°РєСЂС‹С‚СЊ РґРёР°Р»РѕРіРѕРІРѕРµ РѕРєРЅРѕ.
     /// </summary>
     public void Close()
     {

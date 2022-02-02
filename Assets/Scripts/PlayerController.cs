@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-///  Класс, описывающий игрока в тетрис.
+///  Игрок в тетрис.
 /// </summary>
 public class PlayerController : MonoBehaviour
 {

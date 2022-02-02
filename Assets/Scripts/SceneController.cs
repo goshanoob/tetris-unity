@@ -1,10 +1,10 @@
-using goshanoob.Tetris;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using goshanoob.Tetris;
 
 /// <summary>
-///  Класс, управляющий игровым полем.
+/// Контроллер игрового поля.
 /// </summary>
 public class SceneController : MonoBehaviour
 {
@@ -81,7 +81,7 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод настройки размеров и положения игрового поля в зависимости от выбранного режима.
+    /// Настроить размер и положение игрового поля в зависимости от выбранного режима.
     /// </summary>
     private void SetUpGround()
     {
@@ -98,7 +98,7 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод, подготавливающий фигуры к случайному выпадению.
+    /// Подготовить массив вероятностей выпадения фигур.
     /// </summary>
     private void CreateFigures()
     {
@@ -125,15 +125,15 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод, возвращающий случайную фигуру из массива фигур.
+    /// Получить случайную фигуру из массива фигур.
     /// </summary>
     /// <returns></returns>
     private GameObject GetRandomFigure() => figures[figureRandoms.GetNextNumber()];
 
     /// <summary>
-    /// Метод создания случайной фигуры.
+    /// Добавить случайную фигуру на сцену, а также ее копию.
     /// </summary>
-    public void SpawnNewFigure()
+    private void SpawnNewFigure()
     {
         GameObject figure = GetRandomFigure();
         GameObject newFigure = Instantiate(figure, settings.SpawnPosition, Quaternion.identity);
@@ -157,7 +157,7 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод проверки и удаления заполненных линий.
+    /// Удалить заполненные линии.
     /// </summary>
     private void CheckLines()
     {
@@ -188,38 +188,45 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Обработчик падения фигуры.
+    /// Обработать событие падения фигуры.
     /// </summary>
     private void OnFigureDroped()
     {
         // Проверить, не появились ли заполненные линии.
         CheckLines();
-        // Проверить, не настал ли конец игры.
-        CheckGameOver();
+        // Если настал конец игры, завершить создание новых фигур.
+        if (CheckGameOver())
+        {
+            return;
+        }
         // Сгенерировать новую фигуру.
         SpawnNewFigure();
     }
 
     /// <summary>
-    /// Обработчик перезапуска игры.
+    /// Перезагрузить текущую сцену.
     /// </summary>
     private void OnRestartClicked()
     {
-        // Перезагузить текущую сцену.
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private void CheckGameOver()
+    /// <summary>
+    /// Проверить условие окончания игры.
+    /// </summary>
+    private bool CheckGameOver()
     {
+        bool result = false;
         for (int i = 0; i < settings.ColumnCount; i++)
         {
             // Если хотя бы одна заполненная ячейка игрового поля оказалась выше видимой его части на 2 позиции, вызвать событие окончания игры.
             if (Cells[settings.RowCount + 1, i])
             {
+                result = true;
                 GameOver();
                 break;
             }
         }
-
+        return result;
     }
 }

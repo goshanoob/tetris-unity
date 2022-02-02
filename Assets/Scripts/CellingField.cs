@@ -1,11 +1,11 @@
 namespace goshanoob.Tetris
 {
     /// <summary>
-    ///  Класс, управляющий состоянием ячеек игрового поля.
+    /// Ячейки игрового поля.
     /// </summary>
     public class CellingField
     {
-        // Поле для хранения состояний ячеек игрового поля.
+        // Заполненность ячеек игрового поля.
         // true - ячейка заполнена, false - свободна.
         private bool[,] cells;
         private int rowCount = 0; // число строк
@@ -19,11 +19,11 @@ namespace goshanoob.Tetris
         }
 
         /// <summary>
-        /// Индексатор для чтения и записи состояния ячейки.
+        /// Доступ к значениям ячеек игрового поля.
         /// </summary>
         /// <param name="i">Строка</param>
         /// <param name="j">Столбец</param>
-        /// <returns>Возвращает и устанавливает значение ячейки игрового поля.</returns>
+        /// <returns>Возвращает значение ячейки игрового поля.</returns>
         public bool this[int i, int j]
         {
             get

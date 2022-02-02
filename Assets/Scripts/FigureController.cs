@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-///  Класс для управления фигурой.
+/// Контроллер фигуры.
 /// </summary>
 public class FigureController : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class FigureController : MonoBehaviour
     /// </summary>
     private GameSettings settings = null;
     /// <summary>
-    /// Дополнлительная система координат для вращения фигуры.
+    /// Дополнительная система координат для вращения фигуры.
     /// </summary>
     [SerializeField] private GameObject rotator;
     /// <summary>
@@ -104,9 +104,9 @@ public class FigureController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод перемещения фигуры.
+    /// Переместить фигуру.
     /// </summary>
-    /// <param name="movement">Относительная величина перемещения</param>
+    /// <param name="movement">Относительная величина перемещения.</param>
     private void MoveFigure(Vector3 movement)
     {
         if (!isDroped)
@@ -120,7 +120,7 @@ public class FigureController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод вращения фигуры на заданный угол.
+    /// Повернуть фигуру на заданный угол.
     /// </summary>
     /// <param name="angle">Угол поворота</param>
     private void Rotate(float angle)
@@ -138,7 +138,7 @@ public class FigureController : MonoBehaviour
     }
 
     /// <summary>
-    /// Метод проверки допустимости перемещения фигуры.
+    /// Проверить, допустимо ли перемещение фигуры.
     /// </summary>
     /// <param name="movement">Величина перемещения.</param>
     /// <returns></returns>
@@ -220,7 +220,7 @@ public class FigureController : MonoBehaviour
     }
 
     /// <summary>
-    /// Обработчик события удаления линии с определенным номером.
+    /// Удалить линию с определенным номером.
     /// </summary>
     /// <param name="lineNumber">Линия для удаления.</param>
     private void OnLineDestroy(int lineNumber)
@@ -276,7 +276,7 @@ public class FigureController : MonoBehaviour
     /// <summary>
     /// Перебросить фигуру или ее копию от одной границы игрового поля к противоположной.
     /// </summary>
-    /// <param name="xPosition"></param>
+    /// <param name="xPosition">Текущее положение фигуры.</param>
     private void MoveToSide(float xPosition)
     {
         // Если фигура покинула игровое поле через правую границу, то переместить ее к левой, иначе - к правой.

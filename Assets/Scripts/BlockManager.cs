@@ -2,7 +2,7 @@ using goshanoob.Tetris;
 using UnityEngine;
 
 /// <summary>
-/// Класс реализующий действия с блоками фигур.
+/// РњРµРЅРµРґР¶РµСЂ Р±Р»РѕРєРѕРІ С„РёРіСѓСЂ.
 /// </summary>
 public class BlockManager : MonoBehaviour, IBlocksManagement
 {
@@ -37,7 +37,7 @@ public class BlockManager : MonoBehaviour, IBlocksManagement
         {
             if ((int)block.position.y > lineNumber)
             {
-                // Изаменить абсолютные координаты фигуры.
+                // В»Р·Р°РјРµРЅРёС‚СЊ Р°Р±СЃРѕР»СЋС‚РЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ С„РёРіСѓСЂС‹.
                 block.transform.position += Vector3.down;
             }
         }

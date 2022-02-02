@@ -3,49 +3,49 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Класс для работы с графическим интерфейсом.
+/// РљР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РіСЂР°С„РёС‡РµСЃРєРёРј РёРЅС‚РµСЂС„РµР№СЃРѕРј.
 /// </summary>
 public class GUIController : MonoBehaviour
 {
-    [SerializeField] private Text scoreLabel = null; // подпись набранных очков
-    [SerializeField] private PlayerController player = null; // объект игрока
-    [SerializeField] private SceneController sceneController = null; // объект контроллера сцены
-    [SerializeField] private ResultDialog resultDialog = null; // объект окна с результатом игры
+    [SerializeField] private Text scoreLabel = null; // РїРѕРґРїРёСЃСЊ РЅР°Р±СЂР°РЅРЅС‹С… РѕС‡РєРѕРІ
+    [SerializeField] private PlayerController player = null; // РѕР±СЉРµРєС‚ РёРіСЂРѕРєР°
+    [SerializeField] private SceneController sceneController = null; // РѕР±СЉРµРєС‚ РєРѕРЅС‚СЂРѕР»Р»РµСЂР° СЃС†РµРЅС‹
+    [SerializeField] private ResultDialog resultDialog = null; // РѕР±СЉРµРєС‚ РѕРєРЅР° СЃ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј РёРіСЂС‹
 
     /// <summary>
-    /// Событие нажатия кнопки перезагрузки игры.
+    /// РЎРѕР±С‹С‚РёРµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РїРµСЂРµР·Р°РіСЂСѓР·РєРё РёРіСЂС‹.
     /// </summary>
     public event Action RestartClicked;
 
     /// <summary>
-    /// Событие выбора первого режима игры.
+    /// РЎРѕР±С‹С‚РёРµ РІС‹Р±РѕСЂР° РїРµСЂРІРѕРіРѕ СЂРµР¶РёРјР° РёРіСЂС‹.
     /// </summary>
     public event Action FirstModeChecked;
 
     /// <summary>
-    /// Событие выбора второго режима игры.
+    /// РЎРѕР±С‹С‚РёРµ РІС‹Р±РѕСЂР° РІС‚РѕСЂРѕРіРѕ СЂРµР¶РёРјР° РёРіСЂС‹.
     /// </summary>
     public event Action SecondModeChecked;
 
     private void Awake()
     {
-        // Добавить обработчик к собтию объекта игрока, возникающем при изменении счета.
+        // Р”РѕР±Р°РІРёС‚СЊ РѕР±СЂР°Р±РѕС‚С‡РёРє Рє СЃРѕР±С‚РёСЋ РѕР±СЉРµРєС‚Р° РёРіСЂРѕРєР°, РІРѕР·РЅРёРєР°СЋС‰РµРј РїСЂРё РёР·РјРµРЅРµРЅРёРё СЃС‡РµС‚Р°.
         player.ScoreChanged += OnScoreChanged;
-        // Добавить обработчик к событию, возникающем в контроллере сцены при окончании игры.
+        // Р”РѕР±Р°РІРёС‚СЊ РѕР±СЂР°Р±РѕС‚С‡РёРє Рє СЃРѕР±С‹С‚РёСЋ, РІРѕР·РЅРёРєР°СЋС‰РµРј РІ РєРѕРЅС‚СЂРѕР»Р»РµСЂРµ СЃС†РµРЅС‹ РїСЂРё РѕРєРѕРЅС‡Р°РЅРёРё РёРіСЂС‹.
         sceneController.GameOver += OnGameOver;
     }
 
     /// <summary>
-    /// Обработчик изменения счета игры.
+    /// РћР±РЅРѕРІРёС‚СЊ РєРѕР»РёС‡РµСЃС‚РІРѕ РЅР°Р±СЂР°РЅРЅС‹С… РѕС‡РєРѕРІ РЅР° СЌРєСЂР°РЅРµ.
     /// </summary>
-    /// <param name="score">Количество очков.</param>
+    /// <param name="score">РљРѕР»РёС‡РµСЃС‚РІРѕ РѕС‡РєРѕРІ.</param>
     private void OnScoreChanged(int score)
     {
         scoreLabel.text = score.ToString();
     }
 
     /// <summary>
-    /// Обработчик события окончания игры.
+    /// Р’С‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕРєРѕРЅС‡Р°РЅРёРё РёРіСЂС‹.
     /// </summary>
     private void OnGameOver()
     {
@@ -53,16 +53,16 @@ public class GUIController : MonoBehaviour
     }
 
     /// <summary>
-    /// Обработчик события нажатия кнопки рестарта игры.
+    /// Р’С‹Р·РІР°С‚СЊ СЃРѕР±С‹С‚РёРµ РїРµСЂРµР·Р°РїСѓСЃРєР° РёРіСЂС‹.
     /// </summary>
     public void OnRestart()
     {
-        // Вызвать собственное событие данного класса при нажатии кнопки рестарта для оповещения объектов-подписчиков.
+        // Р’С‹Р·РІР°С‚СЊ СЃРѕР±СЃС‚РІРµРЅРЅРѕРµ СЃРѕР±С‹С‚РёРµ РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё СЂРµСЃС‚Р°СЂС‚Р° РґР»СЏ РѕРїРѕРІРµС‰РµРЅРёСЏ РѕР±СЉРµРєС‚РѕРІ-РїРѕРґРїРёСЃС‡РёРєРѕРІ.
         RestartClicked?.Invoke();
     }
 
     /// <summary>
-    /// Обработчик события нажатия кнопки выбора первого режима игры.
+    /// Р’С‹Р·РІР°С‚СЊ СЃРѕР±С‹С‚РёРµ РІС‹Р±РѕСЂР° РїРµСЂРІРѕРіРѕ СЂРµР¶РёРјР° РёРіСЂС‹.
     /// </summary>
     public void OnFirstModeChanged()
     {
@@ -70,7 +70,7 @@ public class GUIController : MonoBehaviour
     }
 
     /// <summary>
-    /// Обработчик события нажатия кнопки выбора второго режима игры.
+    /// Р’С‹Р·РІР°С‚СЊ СЃРѕР±С‹С‚РёРµ РІС‹Р±РѕСЂР° РІС‚РѕСЂРѕРіРѕ СЂРµР¶РёРјР° РёРіСЂС‹.
     /// </summary>
     public void OnSecondModeChanged()
     {
