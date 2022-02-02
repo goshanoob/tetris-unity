@@ -7,7 +7,7 @@ using UnityEngine;
 internal class FigureController : MonoBehaviour
 {
     // Игровой объект для вращения фигуры.
-    [SerializeField] private GameObject rotator;
+    [SerializeField] protected GameObject rotator;
     // Допустимое время неподвижности фигуры в секундах.
     [SerializeField] private float dropTime = 0.7f;
     [SerializeField] private float extraDropTime = 0.1f;
@@ -27,7 +27,7 @@ internal class FigureController : MonoBehaviour
     private float timer = 0;
 
     // Событие окончания падения фигуры.
-    protected event Action FigureDroped;
+    public event Action FigureDroped;
 
     public FigureController Clone
     {

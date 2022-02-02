@@ -8,30 +8,41 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
-    private int counter = 0;
-    // Генаратор случайных фигур в соответствии с вероятностями выпадения.
+    /// <summary>
+    /// Генаратор случайных номеров фигур в соответствии с вероятностями выпадения.
+    /// </summary>
     private Randomizer figureRandoms;
 
-    [SerializeField] private GameSettings settings = null;
-    [SerializeField] private GameObject ground = null;
-    [SerializeField] private PlayerController palyer = null;
-    [SerializeField] private GUIController gui = null;
-    [SerializeField] private Camera mainCamera = null;
+    [SerializeField] private GameSettings settings = null; // экземпляр класса настроек игры
+    [SerializeField] private GameObject ground = null; // объект игрового поля
+    [SerializeField] private PlayerController player = null; // экземпляр класса для работы с игроком (ввод, очки)
+    [SerializeField] private GUIController gui = null; // объект графического интерфейса
+    [SerializeField] private Camera mainCamera = null; // объект камеры
     [Header("Префабы фигур")]
-    [SerializeField] private GameObject[] figures = null;
+    [SerializeField] private GameObject[] figures = null; // массив объектов фигур
 
-    // Событие, вызывающее уничтожение заполненных линий.
+    /// <summary>
+    /// Событие, вызывающее уничтожение заполненных линий.
+    /// </summary>
     public event Action<int> LineDestroy;
-    // Событие, вызывающее сдвиг линиц, находящихся выше уничтоженной.
+
+    /// <summary>
+    /// Событие, вызывающее сдвиг линиц, находящихся выше уничтоженной.
+    /// </summary>
     public event Action<int> LinesShift;
 
-    // Автоматическое свойство для работы с заполненными ячейками игрвого поля.
+    /// <summary>
+    /// Свойство для доступа к заполненным ячейкам игрвого поля.
+    /// </summary>
     public CellingField Cells
     {
         get;
         set;
     }
 
+    /// <summary>
+    /// Свойсто для доступа к экземпляру данного класса.
+    /// </summary>
     public static SceneController Instance
     {
         get;
@@ -40,9 +51,11 @@ public class SceneController : MonoBehaviour
 
     private void Awake()
     {
+        // Инициализировать экземпляр текущего класса для доступа из других классов.
         Instance = this;
         // Обработать смену игрвого режима и нажатие на "рестарт", перезапустив сцену.
         settings.GameModeChanged += OnRestartClicked;
+        /// Обработать нажатие на кнопку перезапуска в графическом меню.
         gui.RestartClicked += OnRestartClicked;
 
     }
@@ -52,12 +65,12 @@ public class SceneController : MonoBehaviour
         // Инициализировать массив логических значений, в котором true - заполненная ячейка.
         // Размерность с запасом из-за положения фигур над игровым полем до выпадания.
         Cells = new CellingField(settings.RowCount + 3, settings.ColumnCount);
-        // Настроить внешний вид игрового поля.
+        // Если выбран второй режим игры, изменить внешний вид игрового поля.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
             SetUpGround();
         }
-        // Создать экземпляры фигур в памяти.
+        // Подготовить фигуры к случайному выпадению на основе вероятностей.
         CreateFigures();
         // Вызвать случайную фигуру на сцену.
         SpawnNewFigure();
@@ -72,6 +85,8 @@ public class SceneController : MonoBehaviour
         int rows = settings.RowCount;
         float halfColumns = columns / 2;
         float halfRows = rows / 2;
+
+        // Задать размер и положение игрвого поля на сцене.
         ground.transform.localScale = new Vector3(columns, rows, 1);
         ground.transform.position = new Vector3(halfColumns, halfRows, 0);
         // Поместить камеру над центром поля.
@@ -79,7 +94,7 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Метод, подготавливающий фигуры к случайному выпадению.
     /// </summary>
     private void CreateFigures()
     {
@@ -118,11 +133,12 @@ public class SceneController : MonoBehaviour
     {
         GameObject figure = GetRandomFigure();
         GameObject newFigure = Instantiate(figure, settings.SpawnPosition, Quaternion.identity);
-        // Вынести две строки ниже в отдельный метод.
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
+
         // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
         figureContoller.FigureDroped += OnFigureDroped;
+
         // Если выбран второй режим игры, создать фигуру, дублирующую выпавшую.
         if (settings.Mode == GameSettings.Modes.secondMode)
         {
@@ -130,6 +146,7 @@ public class SceneController : MonoBehaviour
             Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
             GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
+
             // Сохранить ссылку на клон в классе фигуры-оригинала для взаимосвязанного движения.
             figureContoller.Clone = figureCloneController;
         }
@@ -159,7 +176,7 @@ public class SceneController : MonoBehaviour
                     Cells.ShiftLines(i);
                     // Вызвать событие сдвига линий выше i-й у каждой фигуры.
                     LinesShift?.Invoke(i);
-                    palyer.Score++;
+                    player.Score++;
                 }
                 i--;
             }

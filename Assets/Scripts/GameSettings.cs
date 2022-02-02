@@ -3,16 +3,16 @@ using UnityEngine;
 
 internal class GameSettings : MonoBehaviour
 {
-    // Количество строк игрового поля.
-    private int rowCount = 20;
-    // Количество столбцов игрового поля.
-    private int columnCount = 10;
-    // Увеличенное число столбцов поля.
-    private int extraColumnCount = 12;
-    // Подключение экземпляра класса грфического интерфейса.
-    [SerializeField] private GUIController gui = null;
+    [SerializeField] private int rowCount = 20; // количество строк игрового поля
+    [SerializeField] private int columnCount = 10; // количество столбцов игрового поля
+    [SerializeField] private int extraColumnCount = 12; // увеличенное число столбцов поля
+    [SerializeField] private float dropTime = 0.7f; // допустимое время неподвижности фигуры в секундах
+    [SerializeField] private float extraDropTime = 0.1f; // время неподвижности фигуры для ускоренного перемещения вниз
+    [SerializeField] private GUIController gui = null; // экземпляр класса грфического интерфейса
 
-    // Событие смены режима.
+    /// <summary>
+    /// Событие смены режима.
+    /// </summary>
     public event Action GameModeChanged;
 
     /// <summary>
@@ -43,8 +43,11 @@ internal class GameSettings : MonoBehaviour
     }
 
     /// <summary>
-    /// Число солбцов игрового поля.
+    /// Число столбцов игрового поля.
     /// </summary>
+    /// <remarks>
+    /// Возвращается количество столбцов в зависимости от выбранного режима.
+    /// </remarks>
     public int ColumnCount
     {
         get
@@ -60,6 +63,9 @@ internal class GameSettings : MonoBehaviour
     /// <summary>
     /// Необходимое число подряд идущих собранных линий для их уничтожения. 
     /// </summary>
+    /// <remarks>
+    /// Возвращается число строк минимально достаточное для их удаления в зависимости от выбранного режима.
+    /// </remarks>
     public int LinesForDestroy
     {
         get
@@ -76,6 +82,9 @@ internal class GameSettings : MonoBehaviour
     /// <summary>
     /// Коориданты появления новых фигур.
     /// </summary>
+    /// <remarks>
+    /// Возвращается вектор координат точки возникновения фигуры в зависимости от выбранного режима в соответствии с шириной игрового поля.
+    /// </remarks>
     public Vector3 SpawnPosition
     {
         get
@@ -106,15 +115,22 @@ internal class GameSettings : MonoBehaviour
 
     private void Awake()
     {
+        // Инициализировать свойство для доступа к объекту данного класса из других классов.
         Instance = this;
 
+        // Если ранее производился выбор режима игры, то восстановить данное значение.
         Mode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "firstMode"));
+
+        // Зарегистрировать обработчик события графического интерфейса, возникающего при выборе первого режима игры.
         gui.FirstModeChecked += () =>
         {
+            // Сохранить выбранный режим игры. Значение будет доступно при перезапуске игры.
             PlayerPrefs.SetString("mode", "firstMode");
             Mode = Modes.firstMode;
+            // Сгенерировать событие изменения режима игры.
             GameModeChanged();
         };
+        // Обработчик события выбора второго режима игры.
         gui.SecondModeChecked += () =>
         {
             PlayerPrefs.SetString("mode", "secondMode");
