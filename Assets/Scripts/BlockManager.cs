@@ -2,7 +2,7 @@ using goshanoob.Tetris;
 using UnityEngine;
 
 /// <summary>
-/// Менеджер блоков фигур.
+/// Менеджер блоков фигуры.
 /// </summary>
 public class BlockManager : MonoBehaviour, IBlocksManagement
 {

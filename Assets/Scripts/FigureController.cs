@@ -90,6 +90,10 @@ public class FigureController : MonoBehaviour
         HideBlocks();
     }
 
+    /// <summary>
+    /// Вызвать падение фигуры на одну клетку в заданный момент времени.
+    /// </summary>
+    /// <param name="maxTime"></param>
     private void FigureStep(float maxTime)
     {
         // Добавить время кадра к счетчику времени.
