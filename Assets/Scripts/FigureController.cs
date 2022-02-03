@@ -177,25 +177,32 @@ public class FigureController : MonoBehaviour
             int rowIndex = Mathf.FloorToInt(yPosition); // индекс строки блока
             int columnIndex = Mathf.FloorToInt(xPosition); // индекс столбца блока
 
-            // Если блок перемещается вбок и встречает препятствие, перемещение недопустимо.
-            if (movement.y == 0 && sceneController.Cells[rowIndex, columnIndex])
-            {
-                result = false;
-                break;
-            }
-
-            // Если достигли земли или другой упавшей фигуры, пометить текущую фигуру упавшей.
-            if (yPosition <= 0 ||
-                sceneController.Cells[rowIndex, columnIndex])
+            // Если перемещение было вниз, и достигли последней линии либо произошло столкновение,
+            // то перемещение недопустимо, а фигура почемается упавшей.
+            if (movement.y != 0 &&
+               (rowIndex < 0 || sceneController.Cells[rowIndex, columnIndex]))
             {
                 isDroped = true;
                 result = false;
                 break;
             }
 
-            // Если в первом режиме игры хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
+            // Для первого режима:
+            // Если перемещение было вбок (или поворот), и произошло столкновение, либо достигли боковой линии,
+            // перемещение недопустимо, но фигура может продолжить падать.
             if (settings.Mode == GameSettings.Modes.FirstMode &&
-               (xPosition >= width || xPosition < 0))
+               (sceneController.Cells[rowIndex, columnIndex] ||
+                columnIndex < 0 || columnIndex >= width))
+            {
+                result = false;
+                break;
+            }
+
+            // Для второго режима:
+            // Если перемещение было вбок (или поворот), и произошло столкновение,
+            // перемещение недопустимо, но фигура может продолжить падать.
+            if (settings.Mode == GameSettings.Modes.SecondMode &&
+                sceneController.Cells[rowIndex, columnIndex])
             {
                 result = false;
                 break;
@@ -213,11 +220,12 @@ public class FigureController : MonoBehaviour
         }
         // Отменить перемещение независимо от результата проверки.
         transform.position -= movement;
-        // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения, уничтожить невидимую копию фигуры.
+        // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения.
         if (isDroped)
         {
             blockManager.FillBlocks();
             FigureDroped?.Invoke();
+            // Если данная фигура - не клон, пометить ее клон также упавшим.
             if (Clone != null)
             {
                 Clone.IsDroped = true;
