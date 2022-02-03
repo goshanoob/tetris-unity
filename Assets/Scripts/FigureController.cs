@@ -86,13 +86,9 @@ public class FigureController : MonoBehaviour
         sceneController.LinesShift += blockManager.OnLinesShift;
 
         // Обработчики событий перемещения.
-        playerController.SideClick += move =>
-        {
-            MoveFigure(move);
-        };
-
+        playerController.SideClick += move => MoveFigure(move);
         playerController.RotateClick += () => Rotate(angle);
-        playerController.DownClick += () => FigureStep(settings.ExtraDropTime); ;
+        playerController.DownClick += () => FigureStep(settings.ExtraDropTime);
     }
 
     private void Update()
@@ -240,15 +236,17 @@ public class FigureController : MonoBehaviour
     /// <param name="xPosition">Текущее положение фигуры.</param>
     private void MoveToSide(float xPosition)
     {
+        Vector3 movement;
         // Если фигура покинула игровое поле через правую границу, то переместить ее к левой, иначе - к правой.
         if (xPosition >= 2 * settings.ColumnCount)
         {
-            transform.Translate(2 * settings.ColumnCount * Vector3.left);
+            movement = 2 * settings.ColumnCount * Vector3.left;
         }
         else
         {
-            transform.Translate(2 * settings.ColumnCount * Vector3.right);
+            movement = 2 * settings.ColumnCount * Vector3.right;
         }
+        transform.Translate(movement);
     }
 
     /// <summary>
