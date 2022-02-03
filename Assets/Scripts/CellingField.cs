@@ -1,16 +1,28 @@
-namespace goshanoob.Tetris
+namespace goshanoob.TETRIS
 {
     /// <summary>
     /// Ячейки игрового поля.
     /// </summary>
     public class CellingField
     {
-        // Заполненность ячеек игрового поля.
-        // true - ячейка заполнена, false - свободна.
+        /// <summary>
+        /// Заполненность ячеек игрового поля. true - ячейка заполнена, false - свободна.
+        /// </summary>
         private bool[,] cells;
-        private int rowCount = 0; // число строк
-        private int columnCount = 0; // число столбцов
+        /// <summary>
+        /// Число строк игрового поля.
+        /// </summary>
+        private int rowCount = 0;
+        /// <summary>
+        /// Число столбцов игрового поля.
+        /// </summary>
+        private int columnCount = 0;
 
+        /// <summary>
+        /// Конструктор класса игрового поля.
+        /// </summary>
+        /// <param name="rowCount">Число строк игрового поля.</param>
+        /// <param name="columnCount">Количество столбцов игрового поля.</param>
         public CellingField(int rowCount = 20, int columnCount = 10)
         {
             this.rowCount = rowCount;

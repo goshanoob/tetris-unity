@@ -1,10 +1,10 @@
-using goshanoob.Tetris;
+using goshanoob.TETRIS;
 using UnityEngine;
 
 /// <summary>
 /// Менеджер блоков фигуры.
 /// </summary>
-public class BlockManager : MonoBehaviour, IBlocksManagement
+public class BlockManager : MonoBehaviour, IBlocksManagement, ILinesManagement
 {
     private GameSettings settings = null; // настройки игры
     private SceneController sceneController = null; // контроллер сцены

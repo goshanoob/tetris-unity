@@ -3,15 +3,33 @@ using UnityEngine;
 
 public class GameSettings : MonoBehaviour
 {
-    [SerializeField] private int rowCount = 20; // количество строк игрового поля
-    [SerializeField] private int columnCount = 10; // количество столбцов игрового поля
-    [SerializeField] private int extraColumnCount = 12; // увеличенное число столбцов поля
-    [SerializeField] private float dropTime = 0.7f; // допустимое время неподвижности фигуры в секундах
-    [SerializeField] private float extraDropTime = 0.1f; // время неподвижности фигуры для ускоренного перемещения вниз
-    [SerializeField] private GUIController gui = null; // экземпляр класса грфического интерфейса
+    /// <summary>
+    /// Количество строк игрового поля.
+    /// </summary>
+    [SerializeField] private int rowCount = 20;
+    /// <summary>
+    /// Количество столбцов игрового поля.
+    /// </summary>
+    [SerializeField] private int columnCount = 10;
+    /// <summary>
+    /// Увеличенное число столбцов поля.
+    /// </summary>
+    [SerializeField] private int extraColumnCount = 12;
+    /// <summary>
+    /// Допустимое время неподвижности фигуры в секундах.
+    /// </summary>
+    [SerializeField] private float dropTime = 0.7f;
+    /// <summary>
+    /// Время неподвижности фигуры для ускоренного перемещения вниз.
+    /// </summary>
+    [SerializeField] private float extraDropTime = 0.1f;
+    /// <summary>
+    /// Экземпляр класса грфического интерфейса.
+    /// </summary>
+    [SerializeField] private GUIController gui = null;
 
     /// <summary>
-    /// Событие смены режима.
+    /// Событие смены режима игры.
     /// </summary>
     public event Action GameModeChanged;
 
@@ -31,7 +49,7 @@ public class GameSettings : MonoBehaviour
     {
         get;
         private set;
-    } = Modes.firstMode;
+    } = Modes.FirstMode;
 
     /// <summary>
     /// Число строк игрвого поля.
@@ -52,7 +70,7 @@ public class GameSettings : MonoBehaviour
     {
         get
         {
-            if (Mode == Modes.secondMode)
+            if (Mode == Modes.SecondMode)
             {
                 return extraColumnCount;
             }
@@ -71,7 +89,7 @@ public class GameSettings : MonoBehaviour
         get
         {
             int count = 1;
-            if (Mode == Modes.secondMode)
+            if (Mode == Modes.SecondMode)
             {
                 count = 2;
             }
@@ -90,7 +108,7 @@ public class GameSettings : MonoBehaviour
         get
         {
             Vector3 postition = new Vector3(columnCount / 2, rowCount, 0);
-            if (Mode == Modes.secondMode)
+            if (Mode == Modes.SecondMode)
             {
                 postition = new Vector3(columnCount / 2 + 1, rowCount, 0); ;
             }
@@ -122,11 +140,11 @@ public class GameSettings : MonoBehaviour
         /// <summary>
         /// Режим с семью фигурами.
         /// </summary>
-        firstMode = 7,
+        FirstMode = 7,
         /// <summary>
         /// Режим с десятью фигурами.
         /// </summary>
-        secondMode = 10,
+        SecondMode = 10,
     }
 
     private void Awake()
@@ -135,22 +153,22 @@ public class GameSettings : MonoBehaviour
         Instance = this;
 
         // Если ранее производился выбор режима игры, то восстановить данное значение.
-        Mode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "firstMode"));
+        Mode = (Modes)Enum.Parse(typeof(Modes), PlayerPrefs.GetString("mode", "FirstMode"));
 
         // Зарегистрировать обработчик события графического интерфейса, возникающего при выборе первого режима игры.
         gui.FirstModeChecked += () =>
         {
             // Сохранить выбранный режим игры. Значение будет доступно при перезапуске игры.
-            PlayerPrefs.SetString("mode", "firstMode");
-            Mode = Modes.firstMode;
+            PlayerPrefs.SetString("mode", "FirstMode");
+            Mode = Modes.FirstMode;
             // Сгенерировать событие изменения режима игры.
             GameModeChanged();
         };
         // Обработчик события выбора второго режима игры.
         gui.SecondModeChecked += () =>
         {
-            PlayerPrefs.SetString("mode", "secondMode");
-            Mode = Modes.secondMode;
+            PlayerPrefs.SetString("mode", "SecondMode");
+            Mode = Modes.SecondMode;
             GameModeChanged();
         };
     }

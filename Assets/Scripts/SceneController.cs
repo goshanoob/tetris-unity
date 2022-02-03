@@ -1,7 +1,7 @@
+using goshanoob.TETRIS;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using goshanoob.Tetris;
 
 /// <summary>
 /// Контроллер игрового поля.
@@ -70,7 +70,7 @@ public class SceneController : MonoBehaviour
         // Размерность с запасом из-за положения фигур над игровым полем до выпадания.
         Cells = new CellingField(settings.RowCount + 3, settings.ColumnCount);
         // Если выбран второй режим игры, изменить внешний вид игрового поля.
-        if (settings.Mode == GameSettings.Modes.secondMode)
+        if (settings.Mode == GameSettings.Modes.SecondMode)
         {
             SetUpGround();
         }
@@ -111,7 +111,7 @@ public class SceneController : MonoBehaviour
         }
 
         // Если выбран второй режим игры, изменить вероятность выпадения седьмой фигуры.
-        if (settings.Mode == GameSettings.Modes.secondMode)
+        if (settings.Mode == GameSettings.Modes.SecondMode)
         {
             // Убедиться, что седьмая фигура подключена в седьмую ячейку в редакторе.
             Figure7 figure7 = figures[6].GetComponent<Figure7>();
@@ -136,7 +136,7 @@ public class SceneController : MonoBehaviour
     private void SpawnNewFigure()
     {
         GameObject figure = GetRandomFigure();
-        GameObject newFigure = Instantiate(figure, settings.SpawnPosition, Quaternion.identity);
+        GameObject newFigure = Instantiate<GameObject>(figure, settings.SpawnPosition, Quaternion.identity);
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
 
@@ -144,11 +144,11 @@ public class SceneController : MonoBehaviour
         figureContoller.FigureDroped += OnFigureDroped;
 
         // Если выбран второй режим игры, создать фигуру, дублирующую выпавшую.
-        if (settings.Mode == GameSettings.Modes.secondMode)
+        if (settings.Mode == GameSettings.Modes.SecondMode)
         {
             // Позиция фигуры-копии симметрична относительно левой границы игрового поля.
             Vector3 clonePosition = settings.SpawnPosition + Vector3.left * settings.ColumnCount;
-            GameObject figureClone = Instantiate(figure, clonePosition, Quaternion.identity);
+            GameObject figureClone = Instantiate<GameObject>(figure, clonePosition, Quaternion.identity);
             FigureController figureCloneController = figureClone.GetComponent<FigureController>();
 
             // Сохранить ссылку на клон в классе фигуры-оригинала для взаимосвязанного движения.

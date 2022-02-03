@@ -1,13 +1,16 @@
 ﻿using System;
 
-namespace goshanoob.Tetris
+namespace goshanoob.TETRIS
 {
     /// <summary>
     /// Структура для работы со случайными величинами.
     /// </summary>
     public struct Randomizer
     {
-        private double[] chances; // массив вероятностей
+        /// <summary>
+        /// Массив вероятностей событий.
+        /// </summary>
+        private double[] chances;
 
         /// <summary>
         /// Создать экземпляр структуры, передав вероятности нескольких событий.
@@ -30,6 +33,7 @@ namespace goshanoob.Tetris
             double randomValue = new Random().NextDouble();
             double sum = 0;
 
+            // Найти отрезок, на который попала случайная величина.
             for (int i = 0, count = chances.Length; i < count; i++)
             {
                 sum += chances[i];

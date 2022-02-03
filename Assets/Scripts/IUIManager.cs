@@ -1,7 +1,7 @@
 using System;
 
 /// <summary>
-/// Методы графического интерфейса.
+/// Графический интерфейс.
 /// </summary>
 public interface IUIManager
 {

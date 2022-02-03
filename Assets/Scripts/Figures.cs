@@ -1,14 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
-namespace goshanoob.Tetris
+namespace goshanoob.TETRIS
 {
     /// <summary>
     /// Абстарктный класс для определения фигур игры.
     /// </summary>
     public abstract class Figure : MonoBehaviour
     {
-        [SerializeField] private double probability = 0; // вероятность выпадения фигуры
+        /// <summary>
+        /// Вероятность выпадения фигуры.
+        /// </summary>
+        [SerializeField] private double probability = 0;
 
         /// <summary>
         /// Вероятность выпадения фигуры.

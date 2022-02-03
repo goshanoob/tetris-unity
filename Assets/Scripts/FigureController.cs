@@ -33,7 +33,7 @@ public class FigureController : MonoBehaviour
     /// <summary>
     /// Угол вращения фигуры.
     /// </summary>
-    private float angle = 90;
+    private readonly float angle = 90;
     /// <summary>
     /// Счетчик времени после последнего сдвига фигуры вниз в секундах.
     /// </summary>
@@ -132,7 +132,7 @@ public class FigureController : MonoBehaviour
         if (!isDroped)
         {
             // Если для клона фигуры позволнено то же перемещение, что и для самой фигуры, выполнить перемещение.
-            if (isMovableClone(movement) && isCorrectMove(movement))
+            if (IsMovableClone(movement) && IsCorrectMove(movement))
             {
                 transform.Translate(movement);
             }
@@ -150,7 +150,7 @@ public class FigureController : MonoBehaviour
             rotator.transform.Rotate(0, 0, angle);
             // Если выполненный поворот недопустим, отменить его.
             // Величина поступательного перемещения, необходимая методу проверки, отсутствует.
-            if (!isCorrectMove(Vector3.zero))
+            if (!IsCorrectMove(Vector3.zero))
             {
                 rotator.transform.Rotate(0, 0, -angle);
             }
@@ -162,7 +162,7 @@ public class FigureController : MonoBehaviour
     /// </summary>
     /// <param name="movement">Величина перемещения.</param>
     /// <returns></returns>
-    public bool isCorrectMove(Vector3 movement)
+    public bool IsCorrectMove(Vector3 movement)
     {
         bool result = true; // результат проверки
         int width = settings.ColumnCount; // ширина игрового поля (максимально допустимая координата)
@@ -194,7 +194,7 @@ public class FigureController : MonoBehaviour
             }
 
             // Если в первом режиме игры хотя бы один блок достиг края игрвого поля, перемещение недопустимо.
-            if (settings.Mode == GameSettings.Modes.firstMode &&
+            if (settings.Mode == GameSettings.Modes.FirstMode &&
                (xPosition >= width || xPosition < 0))
             {
                 result = false;
@@ -204,7 +204,7 @@ public class FigureController : MonoBehaviour
             // Если во втором режиме игры хотя бы один блок копии фигуры (самой фигуры) удалился от границы игрового поля на расстояние превышающее ширину игрового поля,
             // перебросить фигуру (или ее копию) на сторону игрвого поля противоположную пересеченной. 
             // В результате будет выглядеть так, будто фигура вышла через одну границу, а появилась через другую.
-            if (settings.Mode == GameSettings.Modes.secondMode &&
+            if (settings.Mode == GameSettings.Modes.SecondMode &&
                 (xPosition >= 2 * width || xPosition < -width))
             {
                 MoveToSide(xPosition);
@@ -248,12 +248,12 @@ public class FigureController : MonoBehaviour
     /// </summary>
     /// <param name="movement">Величина перемещения.</param>
     /// <returns>Вернется истина, если перемещение доступно.</returns>
-    private bool isMovableClone(Vector3 movement)
+    private bool IsMovableClone(Vector3 movement)
     {
         bool result = true;
         if (Clone != null)
         {
-            result = Clone.isCorrectMove(movement);
+            result = Clone.IsCorrectMove(movement);
             if (!result)
             {
                 isDroped = true;

@@ -7,10 +7,22 @@ using UnityEngine.UI;
 /// </summary>
 public class GUIController : MonoBehaviour
 {
-    [SerializeField] private Text scoreLabel = null; // подпись набранных очков
-    [SerializeField] private PlayerController player = null; // объект игрока
-    [SerializeField] private SceneController sceneController = null; // объект контроллера сцены
-    [SerializeField] private ResultDialog resultDialog = null; // объект окна с результатом игры
+    /// <summary>
+    /// Надпись набранных очков.
+    /// </summary>
+    [SerializeField] private Text scoreLabel = null;
+    /// <summary>
+    /// Объект игрока.
+    /// </summary>
+    [SerializeField] private PlayerController player = null;
+    /// <summary>
+    /// Объект контроллера сцены.
+    /// </summary>
+    [SerializeField] private SceneController sceneController = null;
+    /// <summary>
+    /// Оъект окна с результатом игры.
+    /// </summary>
+    [SerializeField] private ResultDialog resultDialog = null;
 
     /// <summary>
     /// Событие нажатия кнопки перезагрузки игры.

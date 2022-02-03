@@ -1,4 +1,4 @@
-﻿namespace goshanoob.Tetris
+﻿namespace goshanoob.TETRIS
 {
     /// <summary>
     /// Класс, описывающий O-образную фигуру.

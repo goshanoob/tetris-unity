@@ -6,7 +6,10 @@ using UnityEngine.UI;
 /// </summary>
 public class ResultDialog : MonoBehaviour
 {
-    [SerializeField] private Text resultLabel = null; // подпись с результатом игры
+    /// <summary>
+    /// Надпись с результатом игры.
+    /// </summary>
+    [SerializeField] private Text resultLabel = null;
 
     private void Start()
     {
