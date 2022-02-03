@@ -1,3 +1,4 @@
+using goshanoob.TETRIS;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Класс для работы с графическим интерфейсом.
 /// </summary>
-public class GUIController : MonoBehaviour
+public class GUIController : MonoBehaviour, IUIManager
 {
     /// <summary>
     /// Надпись набранных очков.
@@ -51,7 +52,7 @@ public class GUIController : MonoBehaviour
     /// Обновить количество набранных очков на экране.
     /// </summary>
     /// <param name="score">Количество очков.</param>
-    private void OnScoreChanged(int score)
+    public void OnScoreChanged(int score)
     {
         scoreLabel.text = score.ToString();
     }
@@ -59,9 +60,9 @@ public class GUIController : MonoBehaviour
     /// <summary>
     /// Вывести сообщение об окончании игры.
     /// </summary>
-    private void OnGameOver()
+    public void OnGameOver()
     {
-        resultDialog.Open(player.Score);
+        resultDialog.Open(player.Score.ToString());
     }
 
     /// <summary>

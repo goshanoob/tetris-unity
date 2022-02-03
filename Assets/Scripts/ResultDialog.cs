@@ -1,10 +1,11 @@
+using goshanoob.TETRIS;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// Диалоговое окно об окончании игры.
 /// </summary>
-public class ResultDialog : MonoBehaviour
+public class ResultDialog : MonoBehaviour, IDialogWindow
 {
     /// <summary>
     /// Надпись с результатом игры.
@@ -20,7 +21,7 @@ public class ResultDialog : MonoBehaviour
     /// <summary>
     /// Открыть диалоговое окно с результатами игры.
     /// </summary>
-    public void Open(int score)
+    public void Open(string score)
     {
         resultLabel.text = $"Ваш результат: {score} линия(-ий)";
         gameObject.SetActive(true);

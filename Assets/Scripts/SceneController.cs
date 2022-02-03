@@ -12,14 +12,31 @@ public class SceneController : MonoBehaviour
     /// Генаратор случайных номеров фигур в соответствии с вероятностями выпадения.
     /// </summary>
     private Randomizer figureRandoms;
-
-    [SerializeField] private GameSettings settings = null; // экземпляр класса настроек игры
-    [SerializeField] private GameObject ground = null; // объект игрового поля
-    [SerializeField] private PlayerController player = null; // экземпляр класса для работы с игроком (ввод, очки)
-    [SerializeField] private GUIController gui = null; // объект графического интерфейса
-    [SerializeField] private Camera mainCamera = null; // объект камеры
+    /// <summary>
+    /// Экземпляр класса настроек игры.
+    /// </summary>
+    [SerializeField] private GameSettings settings = null;
+    /// <summary>
+    /// Объект игрового поля.
+    /// </summary>
+    [SerializeField] private GameObject ground = null;
+    /// <summary>
+    /// Экземпляр класса игрока.
+    /// </summary>
+    [SerializeField] private PlayerController player = null;
+    /// <summary>
+    /// Объект графического интерфейса.
+    /// </summary>
+    [SerializeField] private GUIController gui = null;
+    /// <summary>
+    /// Объект камеры.
+    /// </summary>
+    [SerializeField] private Camera mainCamera = null;
+    /// <summary>
+    /// Массив объектов фигур.
+    /// </summary>
     [Header("Префабы фигур")]
-    [SerializeField] private GameObject[] figures = null; // массив объектов фигур
+    [SerializeField] private GameObject[] figures = null;
 
     /// <summary>
     /// Событие, вызывающее уничтожение заполненных линий.

@@ -6,9 +6,18 @@ using UnityEngine;
 /// </summary>
 public class BlockManager : MonoBehaviour, IBlocksManagement, ILinesManagement
 {
-    private GameSettings settings = null; // настройки игры
-    private SceneController sceneController = null; // контроллер сцены
-    [SerializeField] private GameObject parent = null; // родительская система координат блоков фигуры
+    /// <summary>
+    /// Настройки игры.
+    /// </summary>
+    private GameSettings settings = null;
+    /// <summary>
+    /// Контроллер сцены.
+    /// </summary>
+    private SceneController sceneController = null;
+    /// <summary>
+    /// Родительская система координат блоков фигуры.
+    /// </summary>
+    [SerializeField] private GameObject parent = null;
 
     private void Awake()
     {

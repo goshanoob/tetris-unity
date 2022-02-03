@@ -90,7 +90,7 @@ public class FigureController : MonoBehaviour
         {
             MoveFigure(move);
         };
-           
+
         playerController.RotateClick += () => Rotate(angle);
         playerController.DownClick += () => FigureStep(settings.ExtraDropTime); ;
     }
