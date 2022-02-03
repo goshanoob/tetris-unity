@@ -19,6 +19,10 @@ public class FigureController : MonoBehaviour
     /// </summary>
     private GameSettings settings = null;
     /// <summary>
+    /// Экземпляр класса управления блоками фигуры.
+    /// </summary>
+    [SerializeField] private BlockManager blockManager = null;
+    /// <summary>
     /// Дополнительная система координат для вращения фигуры.
     /// </summary>
     [SerializeField] private GameObject rotator;
@@ -26,9 +30,14 @@ public class FigureController : MonoBehaviour
     /// Логический флаг для проверки завершенности падения фигуры.
     /// </summary>
     private bool isDroped = false;
-
-    private float angle = 90; // угол вращения фигуры
-    private float timer = 0; // счетчик времени после последнего сдвига фигуры вниз в секундах
+    /// <summary>
+    /// Угол вращения фигуры.
+    /// </summary>
+    private float angle = 90;
+    /// <summary>
+    /// Счетчик времени после последнего сдвига фигуры вниз в секундах.
+    /// </summary>
+    private float timer = 0;
 
     /// <summary>
     /// Событие окончания падения фигуры.
@@ -72,9 +81,16 @@ public class FigureController : MonoBehaviour
     {
         // Зарегистрировать обработчики событий, происходящих в других классах.
 
-        sceneController.LineDestroy += OnLineDestroy;
-        sceneController.LinesShift += OnLinesShift;
-        playerController.SideClick += MoveFigure;
+        // Обработчкики событий удаления линий.
+        sceneController.LineDestroy += blockManager.OnLineDestroy;
+        sceneController.LinesShift += blockManager.OnLinesShift;
+
+        // Обработчики событий перемещения.
+        playerController.SideClick += move =>
+        {
+            MoveFigure(move);
+        };
+           
         playerController.RotateClick += () => Rotate(angle);
         playerController.DownClick += () => FigureStep(settings.ExtraDropTime); ;
     }
@@ -87,7 +103,7 @@ public class FigureController : MonoBehaviour
             FigureStep(settings.DropTime);
         }
         // Скрыть блоки вне игрвого поля.
-        HideBlocks();
+        blockManager.HideBlocks();
     }
 
     /// <summary>
@@ -185,8 +201,8 @@ public class FigureController : MonoBehaviour
                 break;
             }
 
-            // Если во втором режиме игры хотя бы один блок фигуры удалился от своей копии на расстояние двукратно превышающее границу игрового поля,
-            // перебросить фигуру (или ее копию) на сторону игрвого поля обратную пересеченной. 
+            // Если во втором режиме игры хотя бы один блок копии фигуры (самой фигуры) удалился от границы игрового поля на расстояние превышающее ширину игрового поля,
+            // перебросить фигуру (или ее копию) на сторону игрвого поля противоположную пересеченной. 
             // В результате будет выглядеть так, будто фигура вышла через одну границу, а появилась через другую.
             if (settings.Mode == GameSettings.Modes.secondMode &&
                 (xPosition >= 2 * width || xPosition < -width))
@@ -200,7 +216,7 @@ public class FigureController : MonoBehaviour
         // Если фигура упала, отметить заполненные ячейки игрового поля, сгенерировать событие падения, уничтожить невидимую копию фигуры.
         if (isDroped)
         {
-            FillBlocks();
+            blockManager.FillBlocks();
             FigureDroped?.Invoke();
             if (Clone != null)
             {
@@ -208,73 +224,6 @@ public class FigureController : MonoBehaviour
             }
         }
         return result;
-    }
-
-    /// <summary>
-    /// Заполнить ячейки игрвого поля значениями true в местах блоков упавшей фигуры.
-    /// </summary>
-    private void FillBlocks()
-    {
-        foreach (Transform block in rotator.transform)
-        {
-            int rowNumber = Mathf.FloorToInt(block.position.y);
-            int columnNumber = Mathf.FloorToInt(block.position.x);
-            sceneController.Cells.SetCell(rowNumber, columnNumber);
-        }
-    }
-
-    /// <summary>
-    /// Удалить линию с определенным номером.
-    /// </summary>
-    /// <param name="lineNumber">Линия для удаления.</param>
-    private void OnLineDestroy(int lineNumber)
-    {
-        // Перебрать все блоки фигуры.
-        foreach (Transform block in rotator.transform)
-        {
-            // Если блок расположен в линии для удаления, уничтожить его.
-            if (Mathf.FloorToInt(block.position.y) == lineNumber)
-            {
-                Destroy(block.gameObject);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Передвинуть все блоки фигуры, расположенные выше определенной линии
-    /// </summary>
-    /// <param name="lineNumber">Номер линии, ближе к которой сместятся блоки выше нее.</param>
-    private void OnLinesShift(int lineNumber)
-    {
-        foreach (Transform block in rotator.transform)
-        {
-            // Если блок расположен выше линии, то сдвинуть его на единицу вниз.
-            if (Mathf.FloorToInt(block.position.y) > lineNumber)
-            {
-                block.transform.position += Vector3.down;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Скрыть блоки вне игрового поля.
-    /// </summary>
-    private void HideBlocks()
-    {
-        foreach (Transform block in rotator.transform)
-        {
-            float positionX = block.position.x;
-            // Если позиция блока фигуры выходит за границы игрового поля по горизонтали, сделать его невидимым, иначе - сделать видимым.
-            if (positionX >= settings.ColumnCount ||
-                positionX < 0)
-            {
-                block.gameObject.SetActive(false);
-            }
-            else
-            {
-                block.gameObject.SetActive(true);
-            }
-        }
     }
 
     /// <summary>
@@ -308,7 +257,7 @@ public class FigureController : MonoBehaviour
             if (!result)
             {
                 isDroped = true;
-                FillBlocks();
+                blockManager.FillBlocks();
                 FigureDroped?.Invoke();
             }
         }
