@@ -157,7 +157,7 @@ public class SceneController : MonoBehaviour
         // Сообщить экземпляру фигуры о текущем контроллере.
         FigureController figureContoller = newFigure.GetComponent<FigureController>();
 
-        // Зарегистрировать обработчкик события падения фигуры на дно игрового поля.
+        // Зарегистрировать обработчкик события падения фигуры.
         figureContoller.FigureDroped += OnFigureDroped;
 
         // Если выбран второй режим игры, создать фигуру, дублирующую выпавшую.

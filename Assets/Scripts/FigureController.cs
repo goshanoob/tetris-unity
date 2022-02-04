@@ -127,10 +127,44 @@ public class FigureController : MonoBehaviour
     {
         if (!isDroped)
         {
-            // Если для клона фигуры позволнено то же перемещение, что и для самой фигуры, выполнить перемещение.
-            if (IsMovableClone(movement) && IsCorrectMove(movement))
+            // В первом режиме игры достаточно перемещать фигуру, если перемещение допустимо.
+            // Во втором режиме игры нужно учесть поведение копии фигуры.
+            switch (settings.Mode)
             {
-                transform.Translate(movement);
+                case GameSettings.Modes.FirstMode:
+                    // Если перемещение допустимо, выполнить перемещение.
+                    if (IsCorrectMove(movement))
+                    {
+                        transform.Translate(movement);
+                    }
+                    break;
+
+                case GameSettings.Modes.SecondMode:
+                    // Флаг доступности перемещения для копии фигуры.
+                    bool isMovableClone = false;
+                    if (Clone != null)
+                    {
+                        // Проверить допустимость перемещения копии фигуры.
+                        isMovableClone = Clone.IsCorrectMove(movement);
+                        // Если в результате перемещения копия фигуры была помечен упавшей, сама фигура также считается упавшей.
+                        // Пометить соответствующие ячейки игрвого поля заполненными, вызвать событие падения фигуры.
+                        if (Clone.IsDroped)
+                        {
+                            isDroped = true;
+                            blockManager.FillBlocks();
+                            FigureDroped?.Invoke();
+                        }
+                    }
+
+                    // Если для копии фигуры позволнено то же перемещение, что и для самой фигуры, выполнить перемещение.
+                    if (isMovableClone && IsCorrectMove(movement))
+                    {
+                        transform.Translate(movement);
+
+                        Clone.transform.Translate(movement);
+                    }
+                    break;
+
             }
         }
     }
@@ -194,6 +228,17 @@ public class FigureController : MonoBehaviour
                 break;
             }
 
+            // Если во втором режиме игры хотя бы один блок копии фигуры (самой фигуры) удалился от границы игрового поля на расстояние превышающее ширину игрового поля,
+            // перебросить фигуру (или ее копию) на сторону игрвого поля противоположную пересеченной. 
+            // В результате будет выглядеть так, будто фигура вышла через одну границу, а появилась через другую.
+            if (settings.Mode == GameSettings.Modes.SecondMode &&
+                (xPosition >= 2 * width || xPosition < -width))
+            {
+                result = MoveToSide(xPosition);
+                break;
+
+            }
+
             // Для второго режима:
             // Если перемещение было вбок (или поворот), и произошло столкновение,
             // перемещение недопустимо, но фигура может продолжить падать.
@@ -201,16 +246,6 @@ public class FigureController : MonoBehaviour
                 sceneController.Cells[rowIndex, columnIndex])
             {
                 result = false;
-                break;
-            }
-
-            // Если во втором режиме игры хотя бы один блок копии фигуры (самой фигуры) удалился от границы игрового поля на расстояние превышающее ширину игрового поля,
-            // перебросить фигуру (или ее копию) на сторону игрвого поля противоположную пересеченной. 
-            // В результате будет выглядеть так, будто фигура вышла через одну границу, а появилась через другую.
-            if (settings.Mode == GameSettings.Modes.SecondMode &&
-                (xPosition >= 2 * width || xPosition < -width))
-            {
-                MoveToSide(xPosition);
                 break;
             }
         }
@@ -221,7 +256,7 @@ public class FigureController : MonoBehaviour
         {
             blockManager.FillBlocks();
             FigureDroped?.Invoke();
-            // Если данная фигура - не клон, пометить ее клон также упавшим.
+            // Если данная фигура - не клон, обратиться к ее клону и пометить его также упавшим.
             if (Clone != null)
             {
                 Clone.IsDroped = true;
@@ -230,12 +265,15 @@ public class FigureController : MonoBehaviour
         return result;
     }
 
+
     /// <summary>
     /// Перебросить фигуру или ее копию от одной границы игрового поля к противоположной.
     /// </summary>
-    /// <param name="xPosition">Текущее положение фигуры.</param>
-    private void MoveToSide(float xPosition)
+    /// <param name="xPosition">Текущее положение фигуры по гризонтали</param>
+    /// <returns>Вернет истину, если перемещение допустимо.</returns>
+    private bool MoveToSide(float xPosition)
     {
+        bool result = false;
         Vector3 movement;
         // Если фигура покинула игровое поле через правую границу, то переместить ее к левой, иначе - к правой.
         if (xPosition >= 2 * settings.ColumnCount)
@@ -246,26 +284,12 @@ public class FigureController : MonoBehaviour
         {
             movement = 2 * settings.ColumnCount * Vector3.right;
         }
-        transform.Translate(movement);
-    }
 
-    /// <summary>
-    /// Проверить, может ли копия фигуры переместиться также, как и сама фигура.
-    /// </summary>
-    /// <param name="movement">Величина перемещения.</param>
-    /// <returns>Вернется истина, если перемещение доступно.</returns>
-    private bool IsMovableClone(Vector3 movement)
-    {
-        bool result = true;
-        if (Clone != null)
+        // Если рассчитанное перемещение допустимо, выполнить его.
+        if (IsCorrectMove(movement))
         {
-            result = Clone.IsCorrectMove(movement);
-            if (!result)
-            {
-                isDroped = true;
-                blockManager.FillBlocks();
-                FigureDroped?.Invoke();
-            }
+            transform.Translate(movement);
+            result = true;
         }
         return result;
     }
